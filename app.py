@@ -72,7 +72,8 @@ def support_ticket():
     message = f"Subject: {subject}\n\n{body}"
 
     try:
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        with smtplib.SMTP("smtp.mail.me.com", 587) as smtp:
+            smtp.starttls()
             smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             smtp.sendmail(EMAIL_ADDRESS, EMAIL_ADDRESS, message)
     except Exception as e:
