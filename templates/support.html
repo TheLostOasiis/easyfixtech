@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tech Support - John's Easy Tech</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>Request Tech Support</h1>
+  <form action="/support" method="POST">
+    <label for="name">Your Name:</label>
+    <input type="text" name="name" id="name" required>
+
+    <label for="email">Your Email:</label>
+    <input type="email" name="email" id="email" required>
+
+    <label for="issue">Describe Your Issue:</label>
+    <textarea name="issue" id="issue" rows="6" required></textarea>
+
+    <button type="submit">Submit Ticket</button>
+  </form>
+</body>
+</html>
