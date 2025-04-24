@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 # Stripe keys from .env
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
-YOUR_DOMAIN = 'http://localhost:5000'  # Update after deploying
+YOUR_DOMAIN = 'https://easyfixtech.onrender.com'  # Update with your actual Render URL
 
 @app.route('/')
 def index():
@@ -44,4 +44,5 @@ def thank_you():
     return render_template('thankyou.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
