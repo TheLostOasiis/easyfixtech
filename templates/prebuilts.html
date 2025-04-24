@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PreBuilt PCs - John's Easy Tech</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>PreBuilt PCs for Sale</h1>
+  <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+    {% for pc in prebuilts %}
+      <div style="border: 1px solid #66ccff; padding: 20px; border-radius: 10px; width: 300px; background-color: #111a2e;">
+        <img src="{{ pc.image }}" alt="{{ pc.name }}" style="width: 100%; height: auto; border-radius: 10px;">
+        <h3>{{ pc.name }}</h3>
+        <p>{{ pc.specs }}</p>
+        <p><strong>${{ pc.price }}</strong></p>
+        <form action="/create-checkout-session" method="POST">
+          <input type="hidden" name="item" value="{{ pc.name }}">
+          <input type="hidden" name="amount" value="{{ pc.price }}">
+
+          <label for="email">Email for receipt:</label>
+          <input type="email" name="email" required placeholder="you@example.com" style="width: 100%; padding: 8px; margin: 10px 0;">
+
+          <button type="submit">Buy Now</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+</body>
+</html>

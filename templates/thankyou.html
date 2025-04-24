@@ -1,11 +1,58 @@
-<!-- templates/thankyou.html -->
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Thank You!</title>
+  <title>Thank You - John's Easy Tech</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #000000, #0a0a23, #001f3f);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      text-align: center;
+      padding: 50px;
+    }
+
+    .thank-you-box {
+      background-color: #111a2e;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #00000088;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .thank-you-box h1 {
+      color: #66ccff;
+      font-size: 3em;
+    }
+
+    .thank-you-box p {
+      font-size: 1.2em;
+      margin: 20px 0;
+    }
+
+    .download-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: #66ccff;
+      color: #001f3f;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 10px;
+    }
+
+    .download-btn:hover {
+      background-color: #3399cc;
+    }
+  </style>
 </head>
 <body>
-  <h1>✅ Thank You for Your Order!</h1>
-  <p>We’ll review your submission and contact you soon.</p>
+  <div class="thank-you-box">
+    <h1>✅ Thank You!</h1>
+    <p>Your order has been received and is being processed.</p>
+    <p>A receipt has been emailed to you, and you can also download it below:</p>
+    <a class="download-btn" href="/download-receipt" download>Download Receipt (PDF)</a>
+  </div>
 </body>
 </html>
