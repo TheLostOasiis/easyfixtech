@@ -20,12 +20,23 @@
 
   <section id="prebuilts">
     <h2>🔥 PreBuilt PCs for Sale</h2>
-    <ul>
-      <li><strong>Starter Rig:</strong> Ryzen 5, RX 580 – $650</li>
-      <li><strong>Gamer Pro:</strong> Ryzen 7, RTX 3060 – $1,200</li>
-      <li><strong>Creator Beast:</strong> Ryzen 9, RTX 4070 – $1,800</li>
-    </ul>
+    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+      {% for pc in prebuilts %}
+        <div style="border: 1px solid #66ccff; padding: 20px; border-radius: 10px; width: 300px; background-color: #111a2e;">
+          <img src="{{ pc.image }}" alt="{{ pc.name }}" style="width: 100%; height: auto; border-radius: 10px;">
+          <h3>{{ pc.name }}</h3>
+          <p>{{ pc.specs }}</p>
+          <p><strong>${{ pc.price }}</strong></p>
+          <form action="/create-checkout-session" method="POST">
+            <input type="hidden" name="item" value="{{ pc.name }}">
+            <input type="hidden" name="amount" value="{{ pc.price }}">
+            <button type="submit">Buy Now</button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
   </section>
+  
 
   <section id="support">
     <h2>🛠️ Request Tech Support</h2>
