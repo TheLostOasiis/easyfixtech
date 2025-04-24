@@ -3,23 +3,88 @@
 <head>
   <title>PreBuilt PCs - John's Easy Tech</title>
   <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #000000, #0a0a23, #001f3f);
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #66ccff;
+      margin-bottom: 40px;
+    }
+
+    .pc-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .pc-card {
+      background-color: #111a2e;
+      padding: 20px;
+      border-radius: 15px;
+      width: 300px;
+      box-shadow: 0 0 15px #00000088;
+      text-align: center;
+    }
+
+    .pc-card img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+
+    .pc-card h3 {
+      color: #66ccff;
+    }
+
+    .pc-card p {
+      font-size: 0.95em;
+    }
+
+    input, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+    }
+
+    input {
+      background-color: #fff;
+    }
+
+    button {
+      background-color: #66ccff;
+      color: #001f3f;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #3399cc;
+    }
+  </style>
 </head>
 <body>
-  <h1>PreBuilt PCs for Sale</h1>
-  <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+  <h1>Our PreBuilt PCs</h1>
+  <div class="pc-grid">
     {% for pc in prebuilts %}
-      <div style="border: 1px solid #66ccff; padding: 20px; border-radius: 10px; width: 300px; background-color: #111a2e;">
-        <img src="{{ pc.image }}" alt="{{ pc.name }}" style="width: 100%; height: auto; border-radius: 10px;">
+      <div class="pc-card">
+        <img src="{{ pc.image }}" alt="{{ pc.name }}">
         <h3>{{ pc.name }}</h3>
         <p>{{ pc.specs }}</p>
         <p><strong>${{ pc.price }}</strong></p>
         <form action="/create-checkout-session" method="POST">
           <input type="hidden" name="item" value="{{ pc.name }}">
           <input type="hidden" name="amount" value="{{ pc.price }}">
-
-          <label for="email">Email for receipt:</label>
-          <input type="email" name="email" required placeholder="you@example.com" style="width: 100%; padding: 8px; margin: 10px 0;">
-
+          <label>Email for Receipt:</label>
+          <input type="email" name="email" required placeholder="you@example.com">
           <button type="submit">Buy Now</button>
         </form>
       </div>

@@ -1,26 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Login - John's Easy Tech</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <title>Admin Login - John's Easy Tech</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #000000, #0a0a23, #001f3f);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-box {
+      background-color: #111a2e;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #000000aa;
+      width: 300px;
+    }
+    h1 {
+      text-align: center;
+      color: #66ccff;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+    }
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #66ccff;
+      color: #001f3f;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3399cc;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Admin Login</h1>
-        <form method="POST" class="product-form">
-            <div class="form-group">
-                <label>Username:</label>
-                <input type="text" name="username" required>
-            </div>
-            <div class="form-group">
-                <label>Password:</label>
-                <input type="password" name="password" required>
-            </div>
-            <button type="submit" class="button">Login</button>
-        </form>
-        <div style="margin-top: 20px;">
-            <a href="{{ url_for('index') }}" class="button">Back to Site</a>
-        </div>
-    </div>
+  <div class="login-box">
+    <h1>Admin Login</h1>
+    <form method="POST">
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Log In</button>
+    </form>
+  </div>
 </body>
 </html>

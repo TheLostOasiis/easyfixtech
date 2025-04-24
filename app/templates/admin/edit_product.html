@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Product - Admin</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #000000, #0a0a23, #001f3f);
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 40px;
+    }
+    .form-box {
+      background-color: #111a2e;
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #66ccff;
+    }
+    input, textarea {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #66ccff;
+      color: #001f3f;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-box">
+    <h1>Edit PC</h1>
+    <form method="POST">
+      <input type="text" name="name" value="{{ pc.name }}" required>
+      <textarea name="specs" required>{{ pc.specs }}</textarea>
+      <input type="text" name="price" value="{{ pc.price }}" required>
+      <input type="text" name="image" value="{{ pc.image }}">
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+</body>
+</html>

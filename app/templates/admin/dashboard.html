@@ -1,87 +1,115 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Dashboard - John's Easy Tech</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #000000, #0a0a23, #001f3f);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      color: #66ccff;
+      text-align: center;
+    }
+
+    .section {
+      background-color: #111a2e;
+      padding: 20px;
+      border-radius: 15px;
+      margin: 20px auto;
+      max-width: 800px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 10px;
+      border: none;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      background-color: #66ccff;
+      color: #001f3f;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #3399cc;
+    }
+
+    .ticket, .product {
+      background: #0a0a1f;
+      border: 1px solid #333;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .flex {
+      display: flex;
+      gap: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        {% include "includes/messages.html" %}
-        
-        <nav class="admin-nav">
-            <a href="{{ url_for('admin_products') }}" class="button">Manage Products</a>
-            <a href="{{ url_for('admin_logs') }}" class="button">System Logs</a>
-            <a href="{{ url_for('index') }}" class="button">View Site</a>
-            <a href="{{ url_for('admin_logout') }}" class="button">Logout</a>
-        </nav>
+  <h1>Admin Dashboard</h1>
 
-        <h1>Admin Dashboard</h1>
+  <div class="section">
+    <h2>Add a New Product</h2>
+    <form method="POST" action="/admin/add_product">
+      <input type="text" name="name" placeholder="PC Name" required>
+      <textarea name="specs" placeholder="Specs..." required></textarea>
+      <input type="text" name="price" placeholder="Price in USD" required>
+      <input type="text" name="image" placeholder="Image URL (optional)">
+      <button type="submit">Add Product</button>
+    </form>
+  </div>
 
-        {% include "admin/security_panel.html" %}
-        <div class="dashboard-stats">
-            <div class="stat-box">
-                <h3>Products</h3>
-                <div class="stat-value">{{ products_count }}</div>
-                <div class="stat-label">Total Products</div>
-            </div>
+  <div class="section">
+    <h2>PreBuilt Products</h2>
+    {% for i, pc in enumerate(products) %}
+      <div class="product">
+        <strong>{{ pc.name }}</strong> — ${{ pc.price }}
+        <p>{{ pc.specs }}</p>
+        <form method="GET" action="/admin/delete_product/{{ i }}">
+          <button type="submit">Delete</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
 
-            {% if orders_count is defined %}
-            <div class="stat-box">
-                <h3>Orders</h3>
-                <div class="stat-value">{{ orders_count }}</div>
-                <div class="stat-label">Total Orders</div>
-            </div>
-            {% endif %}
-
-            <div class="stat-box">
-                <h3>System Status</h3>
-                <div class="stat-value">
-                    <a href="{{ url_for('admin_logs') }}" class="button">View Logs</a>
-                </div>
-                <div class="stat-label">Monitor system activity</div>
-            </div>
-        </div>
-
-        <div class="dashboard-actions">
-            <div class="action-box">
-                <h3>Quick Actions</h3>
-                <a href="{{ url_for('admin_products') }}" class="button">Add New Product</a>
-                <a href="{{ url_for('admin_logs') }}" class="button">Check System Logs</a>
-                {% if orders_count is defined %}
-                <a href="{{ url_for('admin_orders') }}" class="button">View Recent Orders</a>
-                {% endif %}
-            </div>
-        </div>
-
-        {% if recent_products %}
-        <div class="recent-items">
-            <h3>Recently Added Products</h3>
-            <div class="products-list">
-                {% for product in recent_products %}
-                <div class="product-item">
-                    <h4>{{ product.name }}</h4>
-                    <p class="price">${{ "%.2f"|format(product.price) }}</p>
-                    <p class="description">{{ product.description }}</p>
-                    <p class="timestamp">Added: {{ product.timestamp }}</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
+  <div class="section">
+    <h2>Support Tickets</h2>
+    {% for ticket in tickets %}
+      <div class="ticket">
+        <strong>{{ ticket.name }}</strong> ({{ ticket.email }})<br>
+        <em>{{ ticket.timestamp }}</em><br>
+        <p>{{ ticket.issue }}</p>
+        <p>Status: <strong>{{ ticket.status }}</strong></p>
+        {% if ticket.status == 'open' %}
+          <form method="GET" action="/admin/close_ticket/{{ ticket.id }}">
+            <button type="submit">Mark as Closed</button>
+          </form>
         {% endif %}
+      </div>
+    {% endfor %}
+  </div>
 
-        <div class="system-info">
-            <h3>System Information</h3>
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="info-label">Logs Location:</span>
-                    <span class="info-value">logs/easyfixtech.log</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Email:</span>
-                    <span class="info-value">{{ EMAIL_ADDRESS }}</span>
-                </div>
-            </div>
-        </div>
-    </div>
+  <div class="section" style="text-align:center;">
+    <form method="GET" action="/admin/logout">
+      <button>Log Out</button>
+    </form>
+  </div>
 </body>
 </html>

@@ -1,22 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tech Support - John's Easy Tech</title>
+  <title>Submit Support Ticket - John's Easy Tech</title>
   <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #000000, #0a0a23, #001f3f);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      padding: 40px 20px;
+      margin: 0;
+    }
+
+    .form-box {
+      background-color: #111a2e;
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 15px #000000aa;
+    }
+
+    h1 {
+      text-align: center;
+      color: #66ccff;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      margin-top: 5px;
+      font-size: 1em;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #66ccff;
+      color: #001f3f;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #3399cc;
+    }
+  </style>
 </head>
 <body>
-  <h1>Request Tech Support</h1>
-  <form action="/support" method="POST">
-    <label for="name">Your Name:</label>
-    <input type="text" name="name" id="name" required>
+  <div class="form-box">
+    <h1>Submit a Support Ticket</h1>
+    <form method="POST">
+      <label for="name">Your Name:</label>
+      <input type="text" name="name" required>
 
-    <label for="email">Your Email:</label>
-    <input type="email" name="email" id="email" required>
+      <label for="email">Your Email:</label>
+      <input type="email" name="email" required>
 
-    <label for="issue">Describe Your Issue:</label>
-    <textarea name="issue" id="issue" rows="6" required></textarea>
+      <label for="issue">Describe Your Issue:</label>
+      <textarea name="issue" rows="5" required></textarea>
 
-    <button type="submit">Submit Ticket</button>
-  </form>
+      <button type="submit">Submit Ticket</button>
+    </form>
+  </div>
 </body>
 </html>
