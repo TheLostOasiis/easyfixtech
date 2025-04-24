@@ -75,7 +75,8 @@ def support_ticket():
         with smtplib.SMTP("smtp.mail.me.com", 587) as smtp:
             smtp.starttls()
             smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            smtp.sendmail(EMAIL_ADDRESS, EMAIL_ADDRESS, message)
+            smtp.sendmail(from_addr=EMAIL_ADDRESS, to_addrs=EMAIL_ADDRESS, msg=message)
+
     except Exception as e:
         return f"Email failed: {str(e)}"
 
