@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 # Stripe keys from .env
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
-YOUR_DOMAIN = 'https://easyfixtech.onrender.com'
+YOUR_DOMAIN = 'https://johnseasytech.com'
 
 # Email credentials
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
