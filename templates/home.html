@@ -3,32 +3,43 @@
 <head>
   <title>John's Easy Tech - Home</title>
   <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin: 30px 0;
+    }
+
+    .nav-links a {
+      background-color: #66ccff;
+      color: #001f3f;
+      padding: 12px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .nav-links a:hover {
+      background-color: #3399cc;
+    }
+  </style>
 </head>
 <body>
   <header>
     <h1>Welcome to John's Easy Tech</h1>
-    <p>Your trusted source for PC builds, repairs, and support services.</p>
+    <p>Your trusted source for PC builds, repairs, and support.</p>
   </header>
+
+  <div class="nav-links">
+    <a href="/prebuilts">💻 View PreBuilt PCs</a>
+    <a href="/custom">🧱 Order Custom PC</a>
+    <a href="/support">🛠️ Request Support</a>
+  </div>
 
   <section>
     <h2>About Us</h2>
-    <p>At John's Easy Tech, we provide high-quality PC builds, fast tech repairs, and reliable remote support. Whether you're gaming, editing, or just need help with your current setup — we're here to help.</p>
-  </section>
-
-  <section>
-    <h2>Contact</h2>
-    <p>Email: support@johnseasytech.com</p>
-    <p>Phone: (555) 123-4567</p>
-  </section>
-
-  <section>
-    <h2>Tech Support Pricing</h2>
-    <ul>
-      <li>Basic diagnostics – $20</li>
-      <li>Software cleanup – $50</li>
-      <li>Remote support – $30/hr</li>
-      <li>Build consultation – Free</li>
-    </ul>
+    <p>We build, repair, and support computers for gamers, creators, and everyday users. Get the help or hardware you need today!</p>
   </section>
 </body>
 </html>
