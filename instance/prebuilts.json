@@ -1,0 +1,17 @@
+[
+    {
+      "id": "starter-rig",
+      "name": "Starter Rig",
+      "specs": "Ryzen 5, RX 580, 16GB RAM, 512GB SSD",
+      "price": 650,
+      "image": "static/images/starter-rig.jpg"
+    },
+    {
+      "id": "gamer-pro",
+      "name": "Gamer Pro",
+      "specs": "Ryzen 7, RTX 3060, 32GB RAM, 1TB NVMe",
+      "price": 1200,
+      "image": "static/images/gamer-pro.jpg"
+    }
+  ]
+  

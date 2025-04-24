@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Products - John's Easy Tech</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <nav class="admin-nav">
+            <a href="{{ url_for('admin_dashboard') }}" class="button">Dashboard</a>
+            <a href="{{ url_for('index') }}" class="button">View Site</a>
+            <a href="{{ url_for('admin_logout') }}" class="button">Logout</a>
+        </nav>
+        
+        <h1>Manage Products</h1>
+        
+        <h2>Add New Product</h2>
+        <form method="POST" class="product-form">
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label>Price:</label>
+                <input type="number" step="0.01" name="price" required>
+            </div>
+            <div class="form-group">
+                <label>Description:</label>
+                <textarea name="description" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Image URL:</label>
+                <input type="text" name="image" placeholder="Leave empty for default image">
+            </div>
+            <button type="submit" class="button">Add Product</button>
+        </form>
+        
+        <h2>Current Products</h2>
+        <div class="products-list">
+            {% for product in products %}
+            <div class="product-item">
+                <h3>{{ product.name }}</h3>
+                <p class="price">${{ "%.2f"|format(product.price) }}</p>
+                <p class="description">{{ product.description }}</p>
+                {% if product.image and product.image != DEFAULT_IMAGE %}
+                <p class="image-url">Image: {{ product.image }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

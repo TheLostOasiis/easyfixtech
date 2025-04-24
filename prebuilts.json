@@ -1,17 +1,9 @@
 [
     {
-      "id": "starter-rig",
-      "name": "Starter Rig",
-      "specs": "Ryzen 5, RX 580, 16GB RAM, 512GB SSD",
-      "price": 650,
-      "image": "static/images/starter-rig.jpg"
-    },
-    {
-      "id": "gamer-pro",
-      "name": "Gamer Pro",
-      "specs": "Ryzen 7, RTX 3060, 32GB RAM, 1TB NVMe",
-      "price": 1200,
-      "image": "static/images/gamer-pro.jpg"
+        "name": "Starter Gaming PC",
+        "price": 799.99,
+        "description": "Perfect for entry-level gaming: Intel Core i5, 16GB RAM, 500GB SSD, GTX 1660",
+        "image": "static/images/default.jpg",
+        "timestamp": "2025-04-24 11:18:00"
     }
-  ]
-  
+]

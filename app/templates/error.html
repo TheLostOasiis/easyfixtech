@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error - John's Easy Tech</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="error-container">
+            <h1>Oops! Something went wrong</h1>
+            <div class="error-message">
+                {{ message }}
+            </div>
+            <div class="error-actions">
+                <a href="{{ url_for('index') }}" class="button">Return to Home</a>
+                {% if session.get('admin') %}
+                <a href="{{ url_for('admin_dashboard') }}" class="button">Return to Dashboard</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

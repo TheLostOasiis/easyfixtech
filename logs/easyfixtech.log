@@ -1,0 +1,29 @@
+2025-04-24 11:18:45,596 INFO: EasyFixTech logging system initialized [in <string>:22]
+2025-04-24 11:18:45,596 INFO: Checking directory structure... [in <string>:23]
+2025-04-24 11:18:45,596 INFO: Directory exists: instance/uploads [in <string>:26]
+2025-04-24 11:18:45,596 INFO: Directory exists: instance/receipts [in <string>:26]
+2025-04-24 11:18:45,596 INFO: Directory exists: logs [in <string>:26]
+2025-04-24 11:33:33,268 INFO: Admin system verification test [in <string>:13]
+2025-04-24 11:33:33,268 INFO: System check at 2025-04-24 11:33:33 [in <string>:14]
+2025-04-24 11:33:33,268 WARNING: Test warning message [in <string>:15]
+2025-04-24 11:46:55,590 INFO     [913591] Running system verification checks... (<string>:14)
+2025-04-24 11:46:55,590 INFO     [913591] Directory verified: instance/sessions (permissions: 700) (<string>:20)
+2025-04-24 11:46:55,590 INFO     [913591] Directory verified: instance/uploads (permissions: 755) (<string>:20)
+2025-04-24 11:46:55,590 INFO     [913591] Directory verified: instance/receipts (permissions: 755) (<string>:20)
+2025-04-24 11:46:55,590 INFO     [913591] Directory verified: logs (permissions: 755) (<string>:20)
+2025-04-24 11:46:55,590 INFO     [913591] Testing all log levels (<string>:25)
+2025-04-24 11:46:55,590 INFO     [913591] Info message test (<string>:26)
+2025-04-24 11:46:55,590 WARNING  [913591] Warning message test (<string>:27)
+2025-04-24 11:46:55,590 ERROR    [913591] Error message test (<string>:28)
+2025-04-24 11:46:55,590 INFO     [913591] System verification completed at 2025-04-24 11:46:55 (<string>:31)
+2025-04-24 11:50:42,719 INFO     [919637] Running security verification... (<string>:14)
+2025-04-24 11:50:42,719 INFO     [919637] Security verified: instance/sessions has correct permissions (700) (<string>:28)
+2025-04-24 11:50:42,720 INFO     [919637] Security verified: instance/uploads has correct permissions (700) (<string>:28)
+2025-04-24 11:50:42,720 INFO     [919637] Security verified: instance/receipts has correct permissions (700) (<string>:28)
+2025-04-24 11:50:42,720 INFO     [919637] Security verification completed at 2025-04-24 11:50:42 (<string>:35)
+2025-04-24 11:52:42,666 INFO     [922922] Starting security verification... (/home/johnm/Documents/easyfixtech/./scripts/check_security.py:58)
+2025-04-24 11:52:42,666 INFO     [922922] Security verified: instance/sessions has correct permissions (700) (/home/johnm/Documents/easyfixtech/./scripts/check_security.py:36)
+2025-04-24 11:52:42,666 INFO     [922922] Security verified: instance/uploads has correct permissions (700) (/home/johnm/Documents/easyfixtech/./scripts/check_security.py:36)
+2025-04-24 11:52:42,666 INFO     [922922] Security verified: instance/receipts has correct permissions (700) (/home/johnm/Documents/easyfixtech/./scripts/check_security.py:36)
+2025-04-24 11:52:42,666 INFO     [922922] All security checks passed (/home/johnm/Documents/easyfixtech/./scripts/check_security.py:75)
+2025-04-24 11:52:42,666 INFO     [922922] Security verification completed at 2025-04-24 11:52:42 (/home/johnm/Documents/easyfixtech/./scripts/check_security.py:79)
