@@ -1,4 +1,3 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,18 +5,42 @@
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h1>Welcome to John's Easy Tech</h1>
-  <p>Need a custom gaming PC? You've come to the right place.</p>
+  <nav>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="#prebuilts">PreBuilts</a></li>
+      <li><a href="#support">Support</a></li>
+    </ul>
+  </nav>
 
-  <h2>Place Your Order</h2>
-  <form action="/create-checkout-session" method="POST">
-    <label for="item">Item Description (e.g., Custom Gaming PC):</label><br>
-    <input type="text" id="item" name="item" required><br><br>
+  <header>
+    <h1>Welcome to John's Easy Tech</h1>
+    <p>Your friendly neighborhood PC builder and tech fixer!</p>
+  </header>
 
-    <label for="amount">Amount (in USD):</label><br>
-    <input type="number" id="amount" name="amount" step="0.01" required><br><br>
+  <section id="prebuilts">
+    <h2>🔥 PreBuilt PCs for Sale</h2>
+    <ul>
+      <li><strong>Starter Rig:</strong> Ryzen 5, RX 580 – $650</li>
+      <li><strong>Gamer Pro:</strong> Ryzen 7, RTX 3060 – $1,200</li>
+      <li><strong>Creator Beast:</strong> Ryzen 9, RTX 4070 – $1,800</li>
+    </ul>
+  </section>
 
-    <button type="submit">Pay & Submit Order</button>
-  </form>
+  <section id="support">
+    <h2>🛠️ Request Tech Support</h2>
+    <form action="/support" method="POST">
+      <label for="name">Your Name:</label><br>
+      <input type="text" id="name" name="name" required><br>
+
+      <label for="email">Your Email:</label><br>
+      <input type="email" id="email" name="email" required><br>
+
+      <label for="issue">What's the issue?</label><br>
+      <textarea id="issue" name="issue" rows="5" required></textarea><br>
+
+      <button type="submit">Submit Ticket</button>
+    </form>
+  </section>
 </body>
 </html>
