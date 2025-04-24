@@ -4,42 +4,71 @@
   <title>John's Easy Tech - Home</title>
   <link rel="stylesheet" href="/static/style.css">
   <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom right, #000000, #0a0a23, #001f3f);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-size: 3em;
+      color: #66ccff;
+    }
+
+    p {
+      font-size: 1.2em;
+      line-height: 1.6;
+    }
+
     .nav-links {
+      margin-top: 30px;
       display: flex;
-      gap: 20px;
-      justify-content: center;
-      margin: 30px 0;
+      flex-direction: column;
+      gap: 15px;
     }
 
     .nav-links a {
       background-color: #66ccff;
       color: #001f3f;
-      padding: 12px 24px;
+      padding: 12px 20px;
       border-radius: 10px;
       text-decoration: none;
       font-weight: bold;
+      transition: background 0.2s ease-in-out;
     }
 
     .nav-links a:hover {
       background-color: #3399cc;
     }
+
+    @media (min-width: 600px) {
+      .nav-links {
+        flex-direction: row;
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 <body>
-  <header>
+  <div class="container">
     <h1>Welcome to John's Easy Tech</h1>
-    <p>Your trusted source for PC builds, repairs, and support.</p>
-  </header>
+    <p>We build, fix, and support your tech. Custom gaming PCs, fast repairs, and real answers when you need them most.</p>
 
-  <div class="nav-links">
-    <a href="/prebuilts">💻 View PreBuilt PCs</a>
-    <a href="/custom">🧱 Order Custom PC</a>
-    <a href="/support">🛠️ Request Support</a>
+    <div class="nav-links">
+      <a href="/prebuilts">💻 Browse PreBuilt PCs</a>
+      <a href="/custom">🛠️ Request a Custom Build</a>
+      <a href="/support">📬 Submit a Support Ticket</a>
+    </div>
   </div>
-
-  <section>
-    <h2>About Us</h2>
-    <p>We build, repair, and support computers for gamers, creators, and everyday users. Get the help or hardware you need today!</p>
-  </section>
 </body>
 </html>
