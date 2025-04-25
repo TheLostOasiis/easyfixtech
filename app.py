@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 import uuid
 from functools import wraps
 
+
 # Load environment variables
 load_dotenv()
 
@@ -53,6 +54,16 @@ def save_order(order_data):
             json.dump(orders, f, indent=4)
     except Exception as e:
         print(f"Failed to save order: {e}")
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('admin_logged_in'):
+            return redirect(url_for('admin_login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 
 @app.route('/')
@@ -187,6 +198,7 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
@@ -199,9 +211,10 @@ def admin_login():
     return render_template('admin/login.html')
 
 @app.route('/admin/logout')
+@login_required
 def admin_logout():
-    session.pop('admin', None)
-    return redirect(url_for('index'))
+    session.pop('admin_logged_in', None)
+    return redirect(url_for('admin_login'))
 
 @app.route('/admin/dashboard')
 @app.route('/admin/products', methods=['GET', 'POST'])
