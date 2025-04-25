@@ -101,48 +101,47 @@ def support_ticket():
         email = request.form.get('email')
         issue = request.form.get('issue')
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        ticket_id = str(uuid.uuid4())[:8]
 
-        # Save ticket to JSON
-        ticket_data = {
-            "id": ticket_id,
+        ticket = {
+            "id": str(uuid.uuid4()),
             "name": name,
             "email": email,
             "issue": issue,
-            "status": "open",
-            "timestamp": timestamp
+            "timestamp": timestamp,
+            "status": "open"
         }
 
+        # Save ticket to JSON
         try:
             if os.path.exists("tickets.json"):
                 with open("tickets.json", "r") as f:
-                    all_tickets = json.load(f)
+                    tickets = json.load(f)
             else:
-                all_tickets = []
+                tickets = []
 
-            all_tickets.append(ticket_data)
+            tickets.append(ticket)
 
             with open("tickets.json", "w") as f:
-                json.dump(all_tickets, f, indent=4)
-
+                json.dump(tickets, f, indent=4)
         except Exception as e:
-            return f"Error saving ticket: {str(e)}"
+            print(f"Error saving ticket: {str(e)}")
 
-        # Also send email
-        subject = f"New Support Ticket from {name}"
-        body = f"Name: {name}\nEmail: {email}\nIssue: {issue}"
-        message = f"Subject: {subject}\n\n{body}"
-
+        # Send email
         try:
+            subject = f"New Support Ticket from {name}"
+            body = f"Name: {name}\nEmail: {email}\nIssue: {issue}\nTime: {timestamp}"
+            message = f"Subject: {subject}\n\n{body}"
+
             with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
                 smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
                 smtp.sendmail(from_addr=EMAIL_ADDRESS, to_addrs=EMAIL_ADDRESS, msg=message)
         except Exception as e:
-            return f"Email failed: {str(e)}"
+            print(f"Email failed: {str(e)}")
 
-        return redirect(url_for('thank_you'))
+        return render_template("support_thankyou.html", name=name)
 
-    return render_template('support.html')
+    return render_template("support.html")
+
 
 
 @app.route('/create-checkout-session', methods=['POST'])
