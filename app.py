@@ -264,26 +264,24 @@ def create_checkout_session():
 def add_product():
     try:
         new_product = {
-            "name": request.form.get('name'),
-            "specs": request.form.get('specs'),
-            "price": float(request.form.get('price')),
-            "image": request.form.get('image') or DEFAULT_IMAGE,
-            "category": request.form.get('category') or "General Use"
+            "name": request.form.get("name"),
+            "price": float(request.form.get("price")),
+            "description": request.form.get("specs"),
+            "image": request.form.get("image") or DEFAULT_IMAGE,
+            "category": request.form.get("category") or "General"
         }
 
         prebuilts = load_prebuilts()
         prebuilts.append(new_product)
 
-        with open('prebuilts.json', 'w') as f:
+        with open(PREBUILT_FILE, 'w') as f:
             json.dump(prebuilts, f, indent=4)
 
-        flash("Product added successfully", "success")
+        return redirect(url_for('admin_dashboard'))
+
     except Exception as e:
-        app.logger.error(f"Error adding product: {str(e)}")
-        flash("Failed to add product", "danger")
-
-    return redirect(url_for('admin_dashboard'))
-
+        app.logger.error(f"Error adding product: {e}")
+        return "Failed to add product", 500
 
 
 @app.route('/admin/delete_product/<int:index>', methods=['GET'])
