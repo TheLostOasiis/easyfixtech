@@ -1,4 +1,4 @@
-sorry this is my dashboard.html file <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -27,12 +27,13 @@ sorry this is my dashboard.html file <!DOCTYPE html>
       max-width: 800px;
     }
 
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
       border-radius: 10px;
       border: none;
+      font-family: inherit;
     }
 
     button {
@@ -78,18 +79,23 @@ sorry this is my dashboard.html file <!DOCTYPE html>
       <input type="text" name="name" placeholder="PC Name" required>
       <textarea name="specs" placeholder="Specs..." required></textarea>
       <input type="text" name="price" placeholder="Price in USD" required>
-      <input type="text" name="category" placeholder="Category (e.g., Gaming)" required>
       <input type="text" name="image" placeholder="Image URL (optional)">
+      <select name="category" required>
+        <option value="Gaming">Gaming</option>
+        <option value="Programming">Programming</option>
+        <option value="Video Editing">Video Editing</option>
+        <option value="General Use">General Use</option>
+      </select>
       <button type="submit">Add Product</button>
     </form>
-
   </div>
 
   <div class="section">
     <h2>PreBuilt Products</h2>
     {% for pc in products %}
       <div class="product">
-        <strong>{{ pc.name }}</strong> — ${{ pc.price }}
+        <strong>{{ pc.name }}</strong> — ${{ pc.price }}<br>
+        <em>{{ pc.category }}</em>
         <p>{{ pc.specs }}</p>
         <form method="GET" action="/admin/delete_product/{{ loop.index0 }}">
           <button type="submit">Delete</button>
@@ -98,14 +104,13 @@ sorry this is my dashboard.html file <!DOCTYPE html>
     {% endfor %}
   </div>
 
-<div class="section">
-  <h2>Search Support Tickets</h2>
-  <form method="GET" action="/admin/dashboard">
-    <input type="text" name="search" placeholder="Search by name, email, status..." />
-    <button type="submit">Search</button>
-  </form>
-</div>
-
+  <div class="section">
+    <h2>Search Support Tickets</h2>
+    <form method="GET" action="/admin/dashboard">
+      <input type="text" name="search" placeholder="Search by name, email, status..." />
+      <button type="submit">Search</button>
+    </form>
+  </div>
 
   <div class="section">
     <h2>Support Tickets</h2>
