@@ -146,6 +146,7 @@ def login_required(f):
 
 
 
+
 @app.route('/')
 def index():
     return render_template('home.html')
@@ -431,10 +432,11 @@ def admin_login():
         username = request.form.get('username')
         password = request.form.get('password')
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
-            session['admin'] = True  # Not 'admin_logged_in'
+            session['admin_logged_in'] = True
             return redirect(url_for('admin_dashboard'))
         flash('Invalid credentials')
     return render_template('admin/login.html')
+
 
 
 @app.route('/admin/logout')
