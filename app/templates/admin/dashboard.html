@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       background: linear-gradient(to bottom right, #000000, #0a0a23, #001f3f);
@@ -60,6 +62,11 @@
       display: flex;
       gap: 10px;
     }
+
+    .logout {
+      text-align: center;
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
@@ -78,11 +85,11 @@
 
   <div class="section">
     <h2>PreBuilt Products</h2>
-    {% for i, pc in enumerate(products) %}
+    {% for pc in products %}
       <div class="product">
         <strong>{{ pc.name }}</strong> — ${{ pc.price }}
         <p>{{ pc.specs }}</p>
-        <form method="GET" action="/admin/delete_product/{{ i }}">
+        <form method="GET" action="/admin/delete_product/{{ loop.index0 }}">
           <button type="submit">Delete</button>
         </form>
       </div>
@@ -106,7 +113,7 @@
     {% endfor %}
   </div>
 
-  <div class="section" style="text-align:center;">
+  <div class="logout section">
     <form method="GET" action="/admin/logout">
       <button>Log Out</button>
     </form>
