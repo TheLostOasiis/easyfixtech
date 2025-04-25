@@ -33,6 +33,15 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "change-this-password-immediately")
 DEFAULT_IMAGE = 'static/images/default.jpg'
 ORDERS_FILE = 'orders.json'
 
+# Admin authentication decorator
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('admin'):
+            return redirect(url_for('admin_login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 def load_prebuilts():
     with open('prebuilts.json', 'r') as f:
         prebuilts = json.load(f)
@@ -336,18 +345,6 @@ def get_security_status():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
-
-# Admin authentication decorator
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not session.get('admin'):
-            return redirect(url_for('admin_login'))
-        return f(*args, **kwargs)
-    return decorated_function
-
-
-
 
 
 def send_test_email():
