@@ -77,6 +77,40 @@
       font-weight: bold;
       color: #33cc99;
     }
+
+    form input, form button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    form button {
+      background-color: #66ccff;
+      color: #001f3f;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    form button:hover {
+      background-color: #3399cc;
+    }
+
+    .checkbox-container {
+      margin-top: 10px;
+    }
+
+    .checkbox-container label {
+      color: #ccc;
+      font-size: 0.9em;
+    }
+
+    .checkbox-container a {
+      color: #66ccff;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -96,6 +130,21 @@
           <img src="{{ pc.image }}" alt="{{ pc.name }}">
           <p>{{ pc.description }}</p>
           <p class="price">${{ "%.2f"|format(pc.price) }}</p>
+
+          <form action="/create-checkout-session" method="POST">
+            <input type="hidden" name="item" value="{{ pc.name }}">
+            <input type="hidden" name="amount" value="{{ pc.price }}">
+            <input type="email" name="email" placeholder="Your email" required>
+
+            <div class="checkbox-container">
+              <input type="checkbox" name="agree_terms" required>
+              <label>
+                I agree to the <a href="/terms" target="_blank">Terms & Policies</a>.
+              </label>
+            </div>
+
+            <button type="submit">Buy Now</button>
+          </form>
         </div>
       {% endfor %}
       {% if pcs|length == 0 %}

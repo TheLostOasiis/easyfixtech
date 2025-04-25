@@ -143,6 +143,11 @@ def login_required(f):
 def index():
     return render_template('home.html')
 
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
+
 
 @app.route('/prebuilts')
 def prebuilts():
@@ -322,13 +327,18 @@ def thank_you():
     pdf.cell(200, 10, txt=f"Item: {data['item']}", ln=True)
     pdf.cell(200, 10, txt=f"Amount Paid: ${data['amount']:.2f}", ln=True)
     pdf.cell(200, 10, txt=f"Date: {data['timestamp']}", ln=True)
+    pdf.ln(10)
+    pdf.set_font("Arial", size=10)
+    pdf.multi_cell(200, 10,
+    txt="By completing this order, you agreed to the Terms and Conditions, Warranty Policy, Legal Disclaimers, and Tech Support Agreement. Read them at johnseasytech.com/terms.")
+
     pdf.output("static/receipt.pdf")
 
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
             smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             subject = f"Your Order Receipt - #{data['order_id']}"
-            body = f"Thank you for your order with John's Easy Tech!\n\nOrder #: {data['order_id']}\nItem: {data['item']}\nAmount: ${data['amount']:.2f}\nDate: {data['timestamp']}\n\nPlease find your attached PDF receipt."
+            body = f"Thank you for your order with John's Easy Tech!\n\nOrder #: {data['order_id']}\nItem: {data['item']}\nAmount: ${data['amount']:.2f}\nDate: {data['timestamp']}\n\nPlease find your attached PDF receipt.\n\nBy submitting this order, you agreed to all terms listed at {YOUR_DOMAIN}/terms."
             message = f"Subject: {subject}\n\n{body}"
 
             with open("static/receipt.pdf", "rb") as file:
