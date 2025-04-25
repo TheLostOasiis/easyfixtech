@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import uuid
 from functools import wraps
+from flask import jsonify
+from fpdf import FPDF
+
 
 
 # Load environment variables
@@ -97,7 +100,35 @@ def support_ticket():
         name = request.form.get('name')
         email = request.form.get('email')
         issue = request.form.get('issue')
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        ticket_id = str(uuid.uuid4())[:8]
 
+        # Save ticket to JSON
+        ticket_data = {
+            "id": ticket_id,
+            "name": name,
+            "email": email,
+            "issue": issue,
+            "status": "open",
+            "timestamp": timestamp
+        }
+
+        try:
+            if os.path.exists("tickets.json"):
+                with open("tickets.json", "r") as f:
+                    all_tickets = json.load(f)
+            else:
+                all_tickets = []
+
+            all_tickets.append(ticket_data)
+
+            with open("tickets.json", "w") as f:
+                json.dump(all_tickets, f, indent=4)
+
+        except Exception as e:
+            return f"Error saving ticket: {str(e)}"
+
+        # Also send email
         subject = f"New Support Ticket from {name}"
         body = f"Name: {name}\nEmail: {email}\nIssue: {issue}"
         message = f"Subject: {subject}\n\n{body}"
@@ -109,7 +140,7 @@ def support_ticket():
         except Exception as e:
             return f"Email failed: {str(e)}"
 
-        return "Support ticket received! We'll get back to you soon."
+        return redirect(url_for('thank_you'))
 
     return render_template('support.html')
 
@@ -246,27 +277,34 @@ def download_receipt():
     return send_file("static/receipt.pdf", as_attachment=True)
 
 
-@app.route('/admin/dashboard')
+@app.route('/admin/dashboard', methods=['GET'])
 @login_required
 def admin_dashboard():
     try:
-        # Load products
+        # Load Prebuilt products
         products = load_prebuilts()
 
-        # Load support tickets
+        # Load Tickets
         tickets = []
         if os.path.exists("tickets.json"):
             with open("tickets.json", "r") as f:
                 tickets = json.load(f)
 
-        return render_template(
-            "admin/dashboard.html",
-            products=products,
-            tickets=tickets
-        )
+        # Search filter (GET param)
+        query = request.args.get("search", "").strip().lower()
+        if query:
+            tickets = [t for t in tickets if query in t.get("name", "").lower()
+                       or query in t.get("email", "").lower()
+                       or query in t.get("issue", "").lower()
+                       or query in t.get("status", "").lower()]
+
+        return render_template("admin/dashboard.html", products=products, tickets=tickets)
+
     except Exception as e:
         app.logger.error(f"Dashboard error: {str(e)}")
         return render_template("error.html", message="Dashboard failed"), 500
+
+
 
 @app.route('/admin/test-email')
 @admin_required

@@ -96,6 +96,15 @@
     {% endfor %}
   </div>
 
+<div class="section">
+  <h2>Search Support Tickets</h2>
+  <form method="GET" action="/admin/dashboard">
+    <input type="text" name="search" placeholder="Search by name, email, status..." />
+    <button type="submit">Search</button>
+  </form>
+</div>
+
+
   <div class="section">
     <h2>Support Tickets</h2>
     {% for ticket in tickets %}
