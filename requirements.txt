@@ -2,3 +2,4 @@ Flask
 stripe
 python-dotenv
 fpdf
+flask-session

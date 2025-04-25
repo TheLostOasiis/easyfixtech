@@ -11,6 +11,10 @@ import uuid
 from functools import wraps
 from flask import jsonify
 from fpdf import FPDF
+from flask_session import Session
+
+
+
 
 
 
@@ -23,6 +27,10 @@ app.secret_key = os.getenv("SECRET_KEY", "dev-key-change-in-production")
 # Stripe keys from .env
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 YOUR_DOMAIN = os.getenv("DOMAIN", 'https://johnseasytech.com')
+
+app.config["SESSION_TYPE"] = "filesystem"  # Stores session data on disk
+app.config["SESSION_PERMANENT"] = False
+Session(app)
 
 #Persistant Data Vars
 DATA_DIR = "/data"
@@ -41,7 +49,6 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "change-this-password-immediately")
 
 # Load PreBuilt PCs from JSON file with fallback image
 DEFAULT_IMAGE = 'static/images/default.jpg'
-ORDERS_FILE = 'orders.json'
 
 # Admin authentication decorator
 def admin_required(f):
@@ -424,7 +431,7 @@ def admin_login():
         username = request.form.get('username')
         password = request.form.get('password')
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
-            session['admin_logged_in'] = True
+            session['admin'] = True  # Not 'admin_logged_in'
             return redirect(url_for('admin_dashboard'))
         flash('Invalid credentials')
     return render_template('admin/login.html')
