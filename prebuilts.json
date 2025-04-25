@@ -5,5 +5,10 @@
         "description": "Perfect for entry-level gaming: Intel Core i5, 16GB RAM, 500GB SSD, GTX 1660",
         "image": "static/images/default.jpg",
         "timestamp": "2025-04-24 11:18:00"
+    },
+    {
+        "name": "Intermediate Gaming PC",
+        "Price": 829.99,
+        "description": "Perfect for intermediate-level gaming: AMD Ryzen 5500, 16GB RAM, 1TB M.2 SSD, RX 580 (8GB)"
     }
 ]

@@ -281,8 +281,6 @@ def admin_logout():
     session.pop('admin_logged_in', None)
     return redirect(url_for('admin_login'))
 
-
-@app.route('/admin/dashboard')
 @app.route('/admin/products', methods=['GET', 'POST'])
 @admin_required
 def admin_products():
