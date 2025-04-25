@@ -444,3 +444,7 @@ def get_security_status():
     except Exception as e:
         app.logger.error(f"Failed to get security status: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+
+for rule in app.url_map.iter_rules():
+    print(rule)
