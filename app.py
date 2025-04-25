@@ -24,6 +24,13 @@ app.secret_key = os.getenv("SECRET_KEY", "dev-key-change-in-production")
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 YOUR_DOMAIN = os.getenv("DOMAIN", 'https://johnseasytech.com')
 
+#Persistant Data Vars
+DATA_DIR = "/data"
+PREBUILT_FILE = os.path.join(DATA_DIR, "prebuilts.json")
+TICKETS_FILE = os.path.join(DATA_DIR, "tickets.json")
+ORDERS_FILE = os.path.join(DATA_DIR, "orders.json")
+
+
 # Email credentials
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
@@ -45,6 +52,41 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def initialize_data_files():
+    # Make sure the /data directory exists
+    os.makedirs(DATA_DIR, exist_ok=True)
+
+    # Default Prebuilt PCs to load on first run
+    default_prebuilts = [
+        {
+            "name": "Gamer Beast 5000",
+            "price": 1499.99,
+            "description": "A top-tier rig with RTX 4070 Super and Ryzen 7 7800X3D.",
+            "image": "static/images/default.jpg",
+            "category": "Gaming"
+        },
+        {
+            "name": "Code Cruncher Pro",
+            "price": 899.99,
+            "description": "Perfect for developers, preloaded with Linux and 32GB RAM.",
+            "image": "static/images/default.jpg",
+            "category": "Programming"
+        }
+    ]
+
+    if not os.path.exists(PREBUILT_FILE):
+        with open(PREBUILT_FILE, 'w') as f:
+            json.dump(default_prebuilts, f, indent=4)
+
+    if not os.path.exists(TICKETS_FILE):
+        with open(TICKETS_FILE, 'w') as f:
+            json.dump([], f)
+
+    if not os.path.exists(ORDERS_FILE):
+        with open(ORDERS_FILE, 'w') as f:
+            json.dump([], f)
+
+
 def categorize_prebuilts():
     pcs = load_prebuilts()
     categories = {}
@@ -57,12 +99,17 @@ def categorize_prebuilts():
 
 
 def load_prebuilts():
-    with open('prebuilts.json', 'r') as f:
-        prebuilts = json.load(f)
+    if os.path.exists(PREBUILT_FILE):
+        with open(PREBUILT_FILE, 'r') as f:
+            prebuilts = json.load(f)
+    else:
+        prebuilts = []
+
     for pc in prebuilts:
         if 'image' not in pc or not pc['image']:
             pc['image'] = DEFAULT_IMAGE
     return prebuilts
+
 
 
 def save_order(order_data):
@@ -72,11 +119,14 @@ def save_order(order_data):
                 orders = json.load(f)
         else:
             orders = []
+
         orders.append(order_data)
+
         with open(ORDERS_FILE, 'w') as f:
             json.dump(orders, f, indent=4)
     except Exception as e:
         print(f"Failed to save order: {e}")
+
 
 
 def login_required(f):
@@ -425,6 +475,7 @@ def get_security_status():
         app.logger.error(f"Failed to get security status: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+initialize_data_files()
 
 
 if __name__ == '__main__':
