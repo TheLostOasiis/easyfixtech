@@ -185,6 +185,154 @@ def download_receipt():
     return send_file("static/receipt.pdf", as_attachment=True)
 
 
+@app.route('/admin/test-email')
+@admin_required
+def test_email():
+    if send_test_email():
+        flash('Test email sent successfully!', 'success')
+    else:
+        flash('Failed to send test email. Check logs for details.', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/admin/dashboard')
+@admin_required
+def admin_dashboard():
+    try:
+        # Get products count and recent products
+        prebuilts = load_prebuilts()
+        products_count = len(prebuilts)
+        recent_products = sorted(prebuilts,
+                                 key=lambda x: x.get('timestamp', ''),
+                                 reverse=True)[:5] if prebuilts else []
+
+        # Get orders count if orders file exists
+        orders_count = 0
+        if os.path.exists(ORDERS_FILE):
+            with open(ORDERS_FILE, 'r') as f:
+                orders = json.load(f)
+                orders_count = len(orders)
+
+        # Get email system status
+        email_status = True
+        try:
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=5) as smtp:
+                smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        except Exception as e:
+            app.logger.error(f"Email system check failed: {str(e)}")
+            email_status = False
+
+        return render_template('admin/dashboard.html',
+                               products_count=products_count,
+                               orders_count=orders_count,
+                               recent_products=recent_products,
+                               EMAIL_ADDRESS=EMAIL_ADDRESS,
+                               email_status=email_status)
+    except Exception as e:
+        app.logger.error(f"Dashboard error: {str(e)}")
+        flash('Error loading dashboard data', 'danger')
+        return render_template('error.html',
+                               message="Unable to load dashboard data"), 500
+
+
+@app.route('/admin/test-email')
+@admin_required
+def test_email():
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+            smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            subject = "Test Email - John's Easy Tech Admin System"
+            body = f"""
+            This is a test email from your admin system.
+            Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+            System: John's Easy Tech Admin
+            """
+            message = f"Subject: {subject}\n\n{body}"
+
+            smtp.sendmail(
+                from_addr=EMAIL_ADDRESS,
+                to_addrs=EMAIL_ADDRESS,
+                msg=message
+            )
+
+        flash('Test email sent successfully!', 'success')
+        app.logger.info("Test email sent successfully")
+    except Exception as e:
+        flash(f'Failed to send test email: {str(e)}', 'danger')
+        app.logger.error(f"Test email failed: {str(e)}")
+
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session['admin_logged_in'] = True
+            return redirect(url_for('admin_dashboard'))
+        flash('Invalid credentials')
+    return render_template('admin/login.html')
+
+
+@app.route('/admin/logout')
+@login_required
+def admin_logout():
+    session.pop('admin_logged_in', None)
+    return redirect(url_for('admin_login'))
+
+
+@app.route('/admin/dashboard')
+@app.route('/admin/products', methods=['GET', 'POST'])
+@admin_required
+def admin_products():
+    if request.method == 'POST':
+        new_product = {
+            "name": request.form.get('name'),
+            "price": float(request.form.get('price')),
+            "description": request.form.get('description'),
+            "image": request.form.get('image', DEFAULT_IMAGE)
+        }
+
+        try:
+            prebuilts = load_prebuilts()
+            prebuilts.append(new_product)
+
+            with open('prebuilts.json', 'w') as f:
+                json.dump(prebuilts, f, indent=4)
+
+            return redirect(url_for('admin_products'))
+        except Exception as e:
+            return f"Error adding product: {str(e)}", 500
+
+    prebuilts = load_prebuilts()
+    return render_template('admin/products.html', products=prebuilts)
+####################################################################################################################################################
+@app.route('/admin/security-check', methods=['POST'])
+@admin_required
+def run_security_check():
+    """Run security check and return status"""
+    try:
+        status = check_security_status()
+        return jsonify(status), 200
+    except Exception as e:
+        app.logger.error(f"Security check failed: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/admin/security-status')
+@admin_required
+def get_security_status():
+    """Get current security status"""
+    try:
+        status = get_last_security_status()
+        return jsonify(status), 200
+    except Exception as e:
+        app.logger.error(f"Failed to get security status: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
@@ -199,48 +347,7 @@ def admin_required(f):
     return decorated_function
 
 
-@app.route('/admin/login', methods=['GET', 'POST'])
-def admin_login():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
-            session['admin_logged_in'] = True
-            return redirect(url_for('admin_dashboard'))
-        flash('Invalid credentials')
-    return render_template('admin/login.html')
 
-@app.route('/admin/logout')
-@login_required
-def admin_logout():
-    session.pop('admin_logged_in', None)
-    return redirect(url_for('admin_login'))
-
-@app.route('/admin/dashboard')
-@app.route('/admin/products', methods=['GET', 'POST'])
-@admin_required
-def admin_products():
-    if request.method == 'POST':
-        new_product = {
-            "name": request.form.get('name'),
-            "price": float(request.form.get('price')),
-            "description": request.form.get('description'),
-            "image": request.form.get('image', DEFAULT_IMAGE)
-        }
-        
-        try:
-            prebuilts = load_prebuilts()
-            prebuilts.append(new_product)
-            
-            with open('prebuilts.json', 'w') as f:
-                json.dump(prebuilts, f, indent=4)
-                
-            return redirect(url_for('admin_products'))
-        except Exception as e:
-            return f"Error adding product: {str(e)}", 500
-        
-    prebuilts = load_prebuilts()
-    return render_template('admin/products.html', products=prebuilts)
 
 
 def send_test_email():
@@ -263,80 +370,7 @@ def send_test_email():
         return False
 
 # Add test email route (remove in production)
-@app.route('/admin/test-email')
-@admin_required
-def test_email():
-    if send_test_email():
-        flash('Test email sent successfully!', 'success')
-    else:
-        flash('Failed to send test email. Check logs for details.', 'danger')
-    return redirect(url_for('admin_dashboard'))
-@app.route('/admin/dashboard')
-@admin_required
-def admin_dashboard():
-    try:
-        # Get products count and recent products
-        prebuilts = load_prebuilts()
-        products_count = len(prebuilts)
-        recent_products = sorted(prebuilts, 
-                               key=lambda x: x.get('timestamp', ''), 
-                               reverse=True)[:5] if prebuilts else []
-        
-        # Get orders count if orders file exists
-        orders_count = 0
-        if os.path.exists(ORDERS_FILE):
-            with open(ORDERS_FILE, 'r') as f:
-                orders = json.load(f)
-                orders_count = len(orders)
-        
-        # Get email system status
-        email_status = True
-        try:
-            with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=5) as smtp:
-                smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        except Exception as e:
-            app.logger.error(f"Email system check failed: {str(e)}")
-            email_status = False
-        
-        return render_template('admin/dashboard.html',
-                             products_count=products_count,
-                             orders_count=orders_count,
-                             recent_products=recent_products,
-                             EMAIL_ADDRESS=EMAIL_ADDRESS,
-                             email_status=email_status)
-    except Exception as e:
-        app.logger.error(f"Dashboard error: {str(e)}")
-        flash('Error loading dashboard data', 'danger')
-        return render_template('error.html', 
-                             message="Unable to load dashboard data"), 500
 
-@app.route('/admin/test-email')
-@admin_required
-def test_email():
-    try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-            smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            subject = "Test Email - John's Easy Tech Admin System"
-            body = f"""
-            This is a test email from your admin system.
-            Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-            System: John's Easy Tech Admin
-            """
-            message = f"Subject: {subject}\n\n{body}"
-            
-            smtp.sendmail(
-                from_addr=EMAIL_ADDRESS,
-                to_addrs=EMAIL_ADDRESS,
-                msg=message
-            )
-            
-        flash('Test email sent successfully!', 'success')
-        app.logger.info("Test email sent successfully")
-    except Exception as e:
-        flash(f'Failed to send test email: {str(e)}', 'danger')
-        app.logger.error(f"Test email failed: {str(e)}")
-    
-    return redirect(url_for('admin_dashboard'))
 
 # Logging setup
 def setup_logging(app):
@@ -423,27 +457,7 @@ def handle_exception(e):
                          status_code=500), 500
 
 
-@app.route('/admin/security-check', methods=['POST'])
-@admin_required
-def run_security_check():
-    """Run security check and return status"""
-    try:
-        status = check_security_status()
-        return jsonify(status), 200
-    except Exception as e:
-        app.logger.error(f"Security check failed: {str(e)}")
-        return jsonify({'error': str(e)}), 500
 
-@app.route('/admin/security-status')
-@admin_required
-def get_security_status():
-    """Get current security status"""
-    try:
-        status = get_last_security_status()
-        return jsonify(status), 200
-    except Exception as e:
-        app.logger.error(f"Failed to get security status: {str(e)}")
-        return jsonify({'error': str(e)}), 500
 
 
 for rule in app.url_map.iter_rules():
