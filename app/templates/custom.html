@@ -1,48 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Custom PC Orders - John's Easy Tech</title>
-  <link rel="stylesheet" href="/static/style.css">
-  <style>
-    body {
-      min-height: 100vh;
-      background: linear-gradient(to bottom right, #000000, #0a0a23, #001f3f);
-      color: white;
-      padding: 40px;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-    }
-    .content {
-      max-width: 700px;
-      margin: auto;
-      background-color: #111a2e;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 10px #000;
-    }
-    h1 {
-      color: #66ccff;
-    }
-    .back-btn {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #66ccff;
-      color: #001f3f;
-      text-decoration: none;
-      border-radius: 10px;
-      font-weight: bold;
-    }
-    .back-btn:hover {
-      background-color: #3399cc;
-    }
-  </style>
-</head>
-<body>
-  <div class="content">
-    <h1>Order a Custom PC</h1>
-    <p>We are currently building out our custom PC configurator. In the meantime, contact us directly or use our support form to request a build!</p>
-    <a class="back-btn" href="/">← Back to Home</a>
-  </div>
-</body>
-</html>
+<!-- app/templates/custom.html -->
+{% extends 'base.html' %}
+{% block content %}
+<h2>Request a Custom Build</h2>
+<p>Coming soon! You'll be able to request a fully customized build tailored to your needs.</p>
+{% endblock %}

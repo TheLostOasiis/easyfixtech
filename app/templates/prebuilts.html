@@ -1,165 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>PreBuilt PCs - John's Easy Tech</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      background: linear-gradient(to bottom right, #000000, #0a0a23, #001f3f);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: white;
-      margin: 0;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-      color: #66ccff;
-    }
-
-    .tabs {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 20px 0;
-    }
-
-    .tab {
-      background-color: #111a2e;
-      padding: 10px 20px;
-      border-radius: 10px;
-      color: #66ccff;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .tab.active {
-      background-color: #3399cc;
-      color: #001f3f;
-    }
-
-    .category {
-      display: none;
-    }
-
-    .category.active {
-      display: block;
-    }
-
-    .pc {
-      background-color: #111a2e;
-      margin: 20px auto;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #000000aa;
-      max-width: 700px;
-    }
-
-    .pc img {
-      width: 100%;
-      max-height: 300px;
-      object-fit: cover;
-      border-radius: 10px;
-    }
-
-    .pc h3 {
-      color: #66ccff;
-    }
-
-    .pc p {
-      margin: 5px 0;
-    }
-
-    .price {
-      font-weight: bold;
-      color: #33cc99;
-    }
-
-    form input, form button {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 8px;
-      border: none;
-    }
-
-    form button {
-      background-color: #66ccff;
-      color: #001f3f;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    form button:hover {
-      background-color: #3399cc;
-    }
-
-    .checkbox-container {
-      margin-top: 10px;
-    }
-
-    .checkbox-container label {
-      color: #ccc;
-      font-size: 0.9em;
-    }
-
-    .checkbox-container a {
-      color: #66ccff;
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
-  <h1>Our PreBuilt PC Lineup</h1>
-
-  <div class="tabs">
-    {% for cat in categorized_pcs %}
-      <button class="tab {% if loop.first %}active{% endif %}" onclick="showCategory('{{ cat }}')">{{ cat }}</button>
+<!-- app/templates/prebuilts.html -->
+{% extends 'base.html' %}
+{% block content %}
+<h2>Browse Our Prebuilt PCs</h2>
+{% for category, pcs in categorized_pcs.items() %}
+  <h3>{{ category }}</h3>
+  <div class="pc-list">
+    {% for pc in pcs %}
+      <div class="pc-card">
+        <img src="{{ url_for('static', filename=pc.image.replace('static/', '')) }}" alt="{{ pc.name }}">
+        <h4>{{ pc.name }}</h4>
+        <p>{{ pc.description }}</p>
+        <p><strong>Price:</strong> ${{ pc.price }}</p>
+        <form action="{{ url_for('create_checkout_session') }}" method="POST">
+          <input type="hidden" name="item" value="{{ pc.name }}">
+          <input type="hidden" name="amount" value="{{ pc.price }}">
+          <input type="email" name="email" placeholder="Enter your email" required>
+          <button type="submit"><i class="fas fa-shopping-cart"></i> Buy Now</button>
+        </form>
+      </div>
     {% endfor %}
   </div>
-
-  {% for cat, pcs in categorized_pcs.items() %}
-    <div id="{{ cat }}" class="category {% if loop.first %}active{% endif %}">
-      {% for pc in pcs %}
-        <div class="pc">
-          <h3>{{ pc.name }}</h3>
-          <img src="{{ pc.image }}" alt="{{ pc.name }}">
-          <p>{{ pc.description }}</p>
-          <p class="price">${{ "%.2f"|format(pc.price) }}</p>
-
-          <form action="/create-checkout-session" method="POST">
-            <input type="hidden" name="item" value="{{ pc.name }}">
-            <input type="hidden" name="amount" value="{{ pc.price }}">
-            <input type="email" name="email" placeholder="Your email" required>
-
-            <div class="checkbox-container">
-              <input type="checkbox" name="agree_terms" required>
-              <label>
-                I agree to the <a href="/terms" target="_blank">Terms & Policies</a>.
-              </label>
-            </div>
-
-            <button type="submit">Buy Now</button>
-          </form>
-        </div>
-      {% endfor %}
-      {% if pcs|length == 0 %}
-        <p style="text-align: center;">No PCs available in this category yet.</p>
-      {% endif %}
-    </div>
-  {% endfor %}
-
-  <script>
-    function showCategory(category) {
-      document.querySelectorAll('.category').forEach(div => div.classList.remove('active'));
-      document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
-      document.getElementById(category).classList.add('active');
-      Array.from(document.getElementsByClassName('tab')).find(tab => tab.textContent === category).classList.add('active');
-    }
-  </script>
-</body>
-</html>
+{% endfor %}
+{% endblock %}

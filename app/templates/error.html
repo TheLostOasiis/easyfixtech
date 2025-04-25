@@ -1,23 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Error - John's Easy Tech</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <div class="container">
-        <div class="error-container">
-            <h1>Oops! Something went wrong</h1>
-            <div class="error-message">
-                {{ message }}
-            </div>
-            <div class="error-actions">
-                <a href="{{ url_for('index') }}" class="button">Return to Home</a>
-                {% if session.get('admin') %}
-                <a href="{{ url_for('admin_dashboard') }}" class="button">Return to Dashboard</a>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+<!-- app/templates/error.html -->
+{% extends 'base.html' %}
+{% block content %}
+<h2>Error {{ error_code }}</h2>
+<p>{{ error_message }}</p>
+<a class="btn" href="{{ url_for('index') }}"><i class="fas fa-home"></i> Return to Home</a>
+{% endblock %}

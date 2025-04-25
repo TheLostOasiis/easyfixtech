@@ -1,5 +1,7 @@
 Flask
-stripe
+Flask-Session
 python-dotenv
+stripe
 fpdf
-flask-session
+werkzeug
+gunicorn
