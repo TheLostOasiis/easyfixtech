@@ -156,6 +156,58 @@ def create_checkout_session():
         return str(e)
 
 
+@app.route('/admin/add_product', methods=['POST'])
+@login_required
+def add_product():
+    new_product = {
+        "name": request.form.get("name"),
+        "specs": request.form.get("specs"),
+        "price": float(request.form.get("price")),
+        "image": request.form.get("image", DEFAULT_IMAGE)
+    }
+    try:
+        prebuilts = load_prebuilts()
+        prebuilts.append(new_product)
+        with open("prebuilts.json", "w") as f:
+            json.dump(prebuilts, f, indent=4)
+        return redirect(url_for('admin_dashboard'))
+    except Exception as e:
+        return f"Error adding product: {str(e)}", 500
+
+
+@app.route('/admin/delete_product/<int:index>', methods=['GET'])
+@login_required
+def delete_product(index):
+    try:
+        prebuilts = load_prebuilts()
+        if 0 <= index < len(prebuilts):
+            prebuilts.pop(index)
+            with open("prebuilts.json", "w") as f:
+                json.dump(prebuilts, f, indent=4)
+        return redirect(url_for('admin_dashboard'))
+    except Exception as e:
+        return f"Error deleting product: {str(e)}", 500
+
+
+@app.route('/admin/close_ticket/<ticket_id>', methods=['GET'])
+@login_required
+def close_ticket(ticket_id):
+    try:
+        if os.path.exists("tickets.json"):
+            with open("tickets.json", "r") as f:
+                tickets = json.load(f)
+            for ticket in tickets:
+                if ticket["id"] == ticket_id:
+                    ticket["status"] = "closed"
+            with open("tickets.json", "w") as f:
+                json.dump(tickets, f, indent=4)
+        return redirect(url_for('admin_dashboard'))
+    except Exception as e:
+        return f"Error closing ticket: {str(e)}", 500
+
+
+
+
 @app.route('/thankyou')
 def thank_you():
     with open('last_receipt.json') as f:
@@ -195,44 +247,26 @@ def download_receipt():
 
 
 @app.route('/admin/dashboard')
-@admin_required
+@login_required
 def admin_dashboard():
     try:
-        # Get products count and recent products
-        prebuilts = load_prebuilts()
-        products_count = len(prebuilts)
-        recent_products = sorted(prebuilts,
-                                 key=lambda x: x.get('timestamp', ''),
-                                 reverse=True)[:5] if prebuilts else []
+        # Load products
+        products = load_prebuilts()
 
-        # Get orders count if orders file exists
-        orders_count = 0
-        if os.path.exists(ORDERS_FILE):
-            with open(ORDERS_FILE, 'r') as f:
-                orders = json.load(f)
-                orders_count = len(orders)
+        # Load support tickets
+        tickets = []
+        if os.path.exists("tickets.json"):
+            with open("tickets.json", "r") as f:
+                tickets = json.load(f)
 
-        # Get email system status
-        email_status = True
-        try:
-            with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=5) as smtp:
-                smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        except Exception as e:
-            app.logger.error(f"Email system check failed: {str(e)}")
-            email_status = False
-
-        return render_template('admin/dashboard.html',
-                               products_count=products_count,
-                               orders_count=orders_count,
-                               recent_products=recent_products,
-                               EMAIL_ADDRESS=EMAIL_ADDRESS,
-                               email_status=email_status)
+        return render_template(
+            "admin/dashboard.html",
+            products=products,
+            tickets=tickets
+        )
     except Exception as e:
         app.logger.error(f"Dashboard error: {str(e)}")
-        flash('Error loading dashboard data', 'danger')
-        return render_template('error.html',
-                               message="Unable to load dashboard data"), 500
-
+        return render_template("error.html", message="Dashboard failed"), 500
 
 @app.route('/admin/test-email')
 @admin_required
