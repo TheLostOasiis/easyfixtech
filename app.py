@@ -106,16 +106,16 @@ def categorize_prebuilts():
 
 
 def load_prebuilts():
-    if os.path.exists(PREBUILT_FILE):
-        with open(PREBUILT_FILE, 'r') as f:
-            prebuilts = json.load(f)
-    else:
-        prebuilts = []
-
+    if not os.path.exists('prebuilts.json'):
+        with open('prebuilts.json', 'w') as f:
+            json.dump([], f)
+    with open('prebuilts.json', 'r') as f:
+        prebuilts = json.load(f)
     for pc in prebuilts:
         if 'image' not in pc or not pc['image']:
             pc['image'] = DEFAULT_IMAGE
     return prebuilts
+
 
 
 
@@ -268,28 +268,39 @@ def create_checkout_session():
 
 
 @app.route('/admin/add_product', methods=['POST'])
-@admin_required
+@login_required
 def add_product():
     try:
+        name = request.form['name']
+        specs = request.form['specs']
+        price = float(request.form['price'])
+        image = request.form.get('image', '')
+        category = request.form['category']
+
         new_product = {
-            "name": request.form.get("name"),
-            "price": float(request.form.get("price")),
-            "description": request.form.get("specs"),
-            "image": request.form.get("image") or DEFAULT_IMAGE,
-            "category": request.form.get("category") or "General"
+            "name": name,
+            "specs": specs,
+            "price": price,
+            "image": image,
+            "category": category
         }
 
-        prebuilts = load_prebuilts()
+        # Load current PCs
+        with open('prebuilts.json', 'r') as f:
+            prebuilts = json.load(f)
+
         prebuilts.append(new_product)
 
-        with open(PREBUILT_FILE, 'w') as f:
+        # Save new list
+        with open('prebuilts.json', 'w') as f:
             json.dump(prebuilts, f, indent=4)
 
         return redirect(url_for('admin_dashboard'))
-
     except Exception as e:
-        app.logger.error(f"Error adding product: {e}")
-        return "Failed to add product", 500
+        app.logger.error(f"Add product failed: {str(e)}")
+        flash("Something went wrong when adding the product.")
+        return redirect(url_for('admin_dashboard'))
+
 
 
 @app.route('/admin/delete_product/<int:index>', methods=['GET'])
