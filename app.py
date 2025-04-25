@@ -45,6 +45,17 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def categorize_prebuilts():
+    pcs = load_prebuilts()
+    categories = {}
+    for pc in pcs:
+        cat = pc.get('category', 'Uncategorized')
+        if cat not in categories:
+            categories[cat] = []
+        categories[cat].append(pc)
+    return categories
+
+
 def load_prebuilts():
     with open('prebuilts.json', 'r') as f:
         prebuilts = json.load(f)
@@ -86,7 +97,14 @@ def index():
 @app.route('/prebuilts')
 def prebuilts():
     pcs = load_prebuilts()
-    return render_template('prebuilts.html', prebuilts=pcs)
+    categories = ['Gaming', 'Programming', 'Video Editing', 'General Use']
+    categorized_pcs = {cat: [] for cat in categories}
+
+    for pc in pcs:
+        category = pc.get("category", "General Use")
+        categorized_pcs.setdefault(category, []).append(pc)
+
+    return render_template("prebuilts.html", categorized_pcs=categorized_pcs)
 
 
 @app.route('/custom')
@@ -355,18 +373,20 @@ def admin_logout():
 @app.route('/admin/products', methods=['GET', 'POST'])
 @admin_required
 def admin_products():
+    categories = ["Gaming", "Programming", "Video Editing", "General Use"]
+
     if request.method == 'POST':
         new_product = {
             "name": request.form.get('name'),
             "price": float(request.form.get('price')),
             "description": request.form.get('description'),
-            "image": request.form.get('image', DEFAULT_IMAGE)
+            "image": request.form.get('image', DEFAULT_IMAGE),
+            "category": request.form.get('category', "General Use")
         }
 
         try:
             prebuilts = load_prebuilts()
             prebuilts.append(new_product)
-
             with open('prebuilts.json', 'w') as f:
                 json.dump(prebuilts, f, indent=4)
 
@@ -375,8 +395,14 @@ def admin_products():
             return f"Error adding product: {str(e)}", 500
 
     prebuilts = load_prebuilts()
-    return render_template('admin/products.html', products=prebuilts)
-####################################################################################################################################################
+    categorized_pcs = {cat: [] for cat in categories}
+    for pc in prebuilts:
+        category = pc.get('category', 'General Use')
+        categorized_pcs.setdefault(category, []).append(pc)
+
+    return render_template('admin/products.html', categories=categories, categorized_pcs=categorized_pcs)
+
+
 @app.route('/admin/security-check', methods=['POST'])
 @admin_required
 def run_security_check():

@@ -1,14 +1,16 @@
 [
-    {
-        "name": "Starter Gaming PC",
-        "price": 799.99,
-        "description": "Perfect for entry-level gaming: Intel Core i5, 16GB RAM, 500GB SSD, GTX 1660",
-        "image": "static/images/default.jpg",
-        "timestamp": "2025-04-24 11:18:00"
-    },
-    {
-        "name": "Intermediate Gaming PC",
-        "Price": 829.99,
-        "description": "Perfect for intermediate-level gaming: AMD Ryzen 5500, 16GB RAM, 1TB M.2 SSD, RX 580 (8GB)"
-    }
+  {
+    "name": "BeastMode 5000",
+    "price": 1499.99,
+    "description": "Great for high-end gaming.",
+    "image": "static/images/beastmode.jpg",
+    "category": "Gaming"
+  },
+  {
+    "name": "DevBox Pro",
+    "price": 999.99,
+    "description": "Optimized for coding and compiling.",
+    "image": "static/images/devbox.jpg",
+    "category": "Programming"
+  }
 ]
