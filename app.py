@@ -194,16 +194,6 @@ def download_receipt():
     return send_file("static/receipt.pdf", as_attachment=True)
 
 
-@app.route('/admin/test-email')
-@admin_required
-def test_email():
-    if send_test_email():
-        flash('Test email sent successfully!', 'success')
-    else:
-        flash('Failed to send test email. Check logs for details.', 'danger')
-    return redirect(url_for('admin_dashboard'))
-
-
 @app.route('/admin/dashboard')
 @admin_required
 def admin_dashboard():
