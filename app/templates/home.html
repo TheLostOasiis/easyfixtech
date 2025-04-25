@@ -1,74 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>John's Easy Tech - Home</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to John's Easy Tech</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
-      background: linear-gradient(to bottom right, #000000, #0a0a23, #001f3f);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom right, #000000, #0a0a23, #001f3f);
       color: white;
-      min-height: 100vh;
+    }
+    header {
+      background-color: #111a2e;
+      padding: 30px 20px;
       text-align: center;
     }
-
-    .container {
-      max-width: 800px;
-      margin: auto;
-      padding: 40px 20px;
-    }
-
-    h1 {
-      font-size: 3em;
+    header h1 {
       color: #66ccff;
+      font-size: 2.5em;
+      margin: 0;
     }
-
-    p {
-      font-size: 1.2em;
-      line-height: 1.6;
+    header p {
+      margin-top: 10px;
+      font-size: 1.1em;
     }
-
-    .nav-links {
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
+    nav {
+      text-align: center;
+      margin: 20px 0;
     }
-
-    .nav-links a {
-      background-color: #66ccff;
-      color: #001f3f;
-      padding: 12px 20px;
-      border-radius: 10px;
+    nav a {
+      margin: 0 15px;
+      color: #66ccff;
       text-decoration: none;
       font-weight: bold;
-      transition: background 0.2s ease-in-out;
     }
-
-    .nav-links a:hover {
-      background-color: #3399cc;
+    nav a:hover {
+      text-decoration: underline;
     }
-
-    @media (min-width: 600px) {
-      .nav-links {
-        flex-direction: row;
-        justify-content: center;
-      }
+    .main-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #111a2e;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #000000aa;
+    }
+    .section {
+      margin: 20px 0;
+    }
+    .section h2 {
+      color: #66ccff;
+      border-bottom: 2px solid #66ccff;
+      padding-bottom: 5px;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background-color: #0a0a1f;
+      font-size: 0.9em;
+      margin-top: 40px;
+    }
+    footer a {
+      color: #66ccff;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Welcome to John's Easy Tech</h1>
-    <p>We build, fix, and support your tech. Custom gaming PCs, fast repairs, and real answers when you need them most.</p>
+  <header>
+    <h1>John's Easy Tech</h1>
+    <p>Custom-Built PCs & Tech Support Solutions</p>
+  </header>
 
-    <div class="nav-links">
-      <a href="/prebuilts">💻 Browse PreBuilt PCs</a>
-      <a href="/custom">🛠️ Request a Custom Build</a>
-      <a href="/support">📬 Submit a Support Ticket</a>
+  <nav>
+    <a href="/prebuilts">PreBuilt PCs</a>
+    <a href="/custom">Custom Build Request</a>
+    <a href="/support">Tech Support</a>
+    <a href="/terms">Terms & Policies</a>
+    <a href="mailto:support@johnseasytech.com">Contact</a>
+  </nav>
+
+  <div class="main-content">
+    <div class="section">
+      <h2>Why Choose Us?</h2>
+      <p>At John's Easy Tech, we specialize in providing personalized, high-performance PCs tailored to your needs. Whether you're a gamer, a video editor, a programmer, or just need a reliable machine for everyday use, we've got you covered. Our expert support and transparent policies ensure peace of mind from purchase to delivery.</p>
+    </div>
+    <div class="section">
+      <h2>Explore Our Services</h2>
+      <ul>
+        <li>🚀 Custom-built gaming, editing, and professional-use PCs</li>
+        <li>🔧 Fast and friendly tech support for hardware & software issues</li>
+        <li>🛡️ Optional extended warranty on every system</li>
+        <li>📜 Full transparency with our <a href="/terms" style="color: #33ccff;">Terms and Policies</a></li>
+      </ul>
     </div>
   </div>
+
+  <footer>
+    <p>&copy; 2025 John's Easy Tech | Indiana, USA | <a href="mailto:support@johnseasytech.com">support@johnseasytech.com</a></p>
+  </footer>
 </body>
 </html>
