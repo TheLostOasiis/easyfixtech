@@ -192,11 +192,10 @@ def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        if username == os.getenv('ADMIN_USERNAME', 'admin') and \
-           password == os.getenv('ADMIN_PASSWORD', 'change-this-password'):
-            session['admin'] = True
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session['admin_logged_in'] = True
             return redirect(url_for('admin_dashboard'))
-        return "Invalid credentials", 401
+        flash('Invalid credentials')
     return render_template('admin/login.html')
 
 @app.route('/admin/logout')
