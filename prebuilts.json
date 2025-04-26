@@ -1,16 +1,30 @@
 [
   {
-    "name": "BeastMode 5000",
-    "price": 1499.99,
-    "description": "Great for high-end gaming.",
-    "image": "static/images/beastmode.jpg",
-    "category": "Gaming"
+    "name": "Build 1.1: Basic AMD",
+    "price": 836.63,
+    "description": "CPU: AMD Ryzen 5 5500, Motherboard: Budget A520/B450 Motherboard, RAM: 16GB (2x8GB) DDR4 3200MHz, GPU: AMD Radeon RX 6500 XT 4GB, Storage: 500GB NVMe SSD (PCIe 3.0), Power Supply: 550W 80+ Bronze, Case: Montech X3 Mesh ATX Mid Tower Case",
+    "image": "static/images/placeholder.jpg",
+    "category": "Budget"
   },
   {
-    "name": "DevBox Pro",
-    "price": 999.99,
-    "description": "Optimized for coding and compiling.",
-    "image": "static/images/devbox.jpg",
-    "category": "Programming"
+    "name": "Build 1.2: Entry Intel",
+    "price": 955.40,
+    "description": "CPU: Intel Core i3-13100F, Motherboard: Budget H610 Motherboard, RAM: 16GB (2x8GB) DDR4 3200MHz, GPU: AMD Radeon RX 6600 8GB, Storage: 1TB NVMe SSD (PCIe 3.0), Power Supply: 600W 80+ Gold, Case: BitFenix Nova Mesh M ARGB MicroATX Mini Tower Case",
+    "image": "static/images/placeholder.jpg",
+    "category": "Budget"
+  },
+  {
+    "name": "Build 1.3: Capable AMD",
+    "price": 987.59,
+    "description": "CPU: AMD Ryzen 5 5600, Motherboard: Budget B550 Motherboard, RAM: 16GB (2x8GB) DDR4 3600MHz, GPU: Nvidia GeForce RTX 3050 6GB, Storage: 1TB NVMe SSD (PCIe 3.0), Power Supply: 650W 80+ Bronze, Case: Montech AIR 100 ARGB MicroATX Mid Tower Case",
+    "image": "static/images/placeholder.jpg",
+    "category": "Budget"
+  },
+  {
+    "name": "Build 1.4: Enhanced Intel Budget",
+    "price": 996.54,
+    "description": "CPU: Intel Core i3-14100F, Motherboard: Budget B760 Motherboard (DDR4), RAM: 16GB (2x8GB) DDR4 3600MHz, GPU: AMD Radeon RX 6600 8GB, Storage: 1TB NVMe SSD (PCIe 4.0), Power Supply: 650W 80+ Bronze, Case: Montech X3 Mesh ATX Mid Tower Case",
+    "image": "static/images/placeholder.jpg",
+    "category": "Budget"
   }
-]
+  ]
