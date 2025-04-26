@@ -1,34 +1,66 @@
-<!-- app/templates/admin/dashboard.html -->
 {% extends 'base.html' %}
+{% block title %}Admin Dashboard - {{ super() }}{% endblock %}
+
 {% block content %}
-<h2>Admin Dashboard</h2>
+<h2><i class="fas fa-user-shield"></i> Admin Dashboard</h2>
+<p class="text-muted">Overview of your site's activity.</p>
 
-<div class="admin-summary">
-  <div class="admin-card">
-    <i class="fas fa-desktop fa-2x"></i>
-    <h3>Total Prebuilt PCs</h3>
-    <p>{{ products|length }}</p>
+{# Add welcome message for admin #}
+{% if session.admin_logged_in %}
+<p>Welcome back, Admin!</p>
+{% endif %}
+
+
+<section class="admin-summary">
+  <div class="card admin-card"> {# Use base card class #}
+    <i class="fas fa-desktop"></i>
+    <h3>Total Prebuilts</h3>
+    <p>{{ products | length }}</p>
+    <a href="{{ url_for('admin_view_products') }}" class="btn btn-secondary btn-sm mt-1">Manage</a> {# Smaller button #}
   </div>
 
-  <div class="admin-card">
-    <i class="fas fa-ticket-alt fa-2x"></i>
+  <div class="card admin-card">
+    <i class="fas fa-ticket-alt"></i>
     <h3>Open Tickets</h3>
-    <p>{{ open_ticket_count }}</p>
+    <p>{{ open_ticket_count | default(0) }}</p>
+     <a href="{{ url_for('admin_view_tickets', status='open') }}" class="btn btn-secondary btn-sm mt-1">View Open</a>
   </div>
 
-  <div class="admin-card">
-    <i class="fas fa-shopping-cart fa-2x"></i>
-    <h3>Recent Orders</h3>
-    <p>{{ orders|length }}</p>
+  <div class="card admin-card">
+    <i class="fas fa-shopping-cart"></i>
+    <h3>Total Orders</h3>
+    <p>{{ orders | length }}</p>
+     {# <a href="{{ url_for('admin_view_orders') }}" class="btn btn-secondary btn-sm mt-1">View Orders</a> #} {# Add link if orders page exists #}
   </div>
-</div>
+
+   <div class="card admin-card">
+    <i class="fas fa-envelope"></i>
+    <h3>Email System</h3>
+     {# Basic check if email is configured #}
+     {% if config.EMAIL_ADDRESS %}
+       <p class="text-success"><i class="fas fa-check-circle"></i></p> {# Use icon instead of text #}
+     {% else %}
+        <p class="text-danger"><i class="fas fa-times-circle"></i></p>
+     {% endif %}
+     <form action="{{ url_for('admin_test_email') }}" method="POST" class="no-spinner mt-1"> {# Simple inline form #}
+        <button type="submit" class="btn btn-secondary btn-sm">Send Test</button>
+     </form>
+  </div>
+
+</section>
 
 <hr>
 
+{# Quick links could be buttons or just styled links #}
 <section class="quick-links">
   <h3>Quick Actions</h3>
-  <a class="btn" href="{{ url_for('admin_view_products') }}"><i class="fas fa-cogs"></i> Manage Prebuilts</a>
-  <a class="btn" href="{{ url_for('admin_view_tickets') }}"><i class="fas fa-headset"></i> View Support Tickets</a>
-</section>
+  {# Use secondary button style for admin actions #}
+  <a class="btn btn-secondary" href="{{ url_for('admin_view_products') }}"><i class="fas fa-cogs"></i> Manage Products</a>
+  <a class="btn btn-secondary" href="{{ url_for('admin_view_tickets') }}"><i class="fas fa-headset"></i> Manage Tickets</a>
+  {# Add Security Check Button #}
+   <form action="{{ url_for('run_security_check') }}" method="POST" style="display: inline-block;">
+       <button type="submit" class="btn btn-warning"><i class="fas fa-shield-alt"></i> Run Security Check</button>
+   </form>
 
+</section>
 {% endblock %}

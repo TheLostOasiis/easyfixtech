@@ -1,21 +1,39 @@
-<!-- app/templates/support.html -->
 {% extends 'base.html' %}
+{% block title %}Tech Support - {{ super() }}{% endblock %}
+
 {% block content %}
-<h2>Request Tech Support</h2>
-<p>Need help? Fill out the form below. Our team will get back to you as soon as possible.</p>
+<div class="support-page-content"> {# Use grid layout defined in CSS #}
+  <section>
+    <h2>Request Tech Support</h2>
+    <p class="text-muted">Need help with your computer? Fill out the form below, and our expert team will get back to you as soon as possible.</p>
 
-<form method="POST">
-  <input type="text" name="name" placeholder="Your Name" value="{{ name|default('') }}" required>
-  <input type="email" name="email" placeholder="Your Email" value="{{ email|default('') }}" required>
-  <textarea name="issue" placeholder="Describe your issue..." required>{{ issue|default('') }}</textarea>
-  <button type="submit"><i class="fas fa-paper-plane"></i> Submit Support Request</button>
-</form>
+    {# Add form-group wrappers for better potential styling/spacing #}
+    <form method="POST">
+      <div class="form-group">
+        <label for="name">Your Name</label>
+        <input type="text" id="name" name="name" placeholder="e.g., Jane Doe" value="{{ name | default('') }}" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Your Email</label>
+        <input type="email" id="email" name="email" placeholder="e.g., jane.doe@example.com" value="{{ email | default('') }}" required>
+      </div>
+      <div class="form-group">
+         <label for="issue">Describe Your Issue</label>
+        <textarea id="issue" name="issue" placeholder="Please provide as much detail as possible..." required>{{ issue | default('') }}</textarea>
+      </div>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit Support Request</button>
+    </form>
+  </section>
 
-<section class="support-pricing">
-  <h3>Support Pricing</h3>
-  <ul>
-    <li>Hourly Rate: <strong>$50/hour</strong></li>
-    <li>Flat Rate for Basic Repairs: <strong>$99</strong></li>
-  </ul>
-</section>
+  <aside class="support-pricing"> {# Use aside for secondary content #}
+    <h3>Support Pricing</h3>
+    <p class="text-muted">Transparent and fair pricing.</p>
+    <ul class="no-style">
+      <li><strong>Hourly Rate:</strong> $50 / hour</li>
+      <li><strong>Common Repairs (Flat Rate):</strong> $99</li>
+      <li><strong>Diagnostics Fee (if no repair):</strong> $30</li>
+    </ul>
+    <p class="text-muted mt-8">Contact us for specific quotes!</p>
+  </aside>
+</div>
 {% endblock %}

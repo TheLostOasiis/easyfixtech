@@ -1,25 +1,29 @@
-<!-- app/templates/home.html -->
 {% extends 'base.html' %}
+{% block title %}Welcome - {{ super() }}{% endblock %}
+
 {% block content %}
 <section class="hero">
   <h1>Welcome to John's Easy Tech</h1>
-  <p>Custom-built computers, professional tech support, and unbeatable service.</p>
-  <a href="{{ url_for('prebuilts') }}" class="btn"><i class="fas fa-desktop"></i> Browse Prebuilts</a>
-  <a href="{{ url_for('support_ticket') }}" class="btn"><i class="fas fa-headset"></i> Get Tech Support</a>
+  <p>Your source for custom-built computers, professional tech support, and unbeatable service.</p>
+  {# Use primary button style for main calls to action #}
+  <a href="{{ url_for('prebuilts') }}" class="btn btn-primary"><i class="fas fa-desktop"></i> Browse Prebuilts</a>
+  <a href="{{ url_for('support_ticket') }}" class="btn btn-secondary"><i class="fas fa-headset"></i> Get Tech Support</a>
 </section>
 
 <section class="categories">
-  <h2>Our PC Categories</h2>
-  <ul>
-    <li>🎮 Gaming</li>
-    <li>💻 Programming</li>
-    <li>🎥 Video Editing</li>
-    <li>🖥️ General Use</li>
+  <h2>Explore Our PC Categories</h2>
+  <ul class="no-style"> {# Remove default list styling #}
+    <li><i class="fas fa-gamepad"></i> Gaming Rigs</li>
+    <li><i class="fas fa-code"></i> Programming Powerhouses</li>
+    <li><i class="fas fa-video"></i> Video Editing Stations</li>
+    <li><i class="fas fa-briefcase"></i> General Use & Office</li>
   </ul>
 </section>
 
-<section class="support-info">
-  <h2>Tech Support Services</h2>
-  <p>We offer professional support starting at $50/hour or a flat $99 rate for common repairs!</p>
+<section class="support-info text-center"> {# Added text-center utility #}
+  <h2>Reliable Tech Support</h2>
+  <p>Expert help is just a click away. We offer transparent pricing for repairs and consultations.</p>
+  <p>Starting at <strong>$50/hour</strong> or flat rates like <strong>$99</strong> for common issues!</p>
+  <a href="{{ url_for('support_ticket') }}" class="btn btn-primary mt-1"><i class="fas fa-wrench"></i> Request Service</a>
 </section>
 {% endblock %}

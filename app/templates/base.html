@@ -1,57 +1,138 @@
-<!-- app/templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>John's Easy Tech</title>
+  <title>{% block title %}John's Easy Tech{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto+Slab:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <header class="navbar">
-    <div class="navbar-brand">
-      <a href="{{ url_for('index') }}"><i class="fas fa-microchip"></i> John's Easy Tech</a>
+    <div class="container">
+      <div class="navbar-brand">
+        <a href="{{ url_for('index') }}">
+          <i class="fas fa-microchip"></i>
+          <span>John's Easy Tech</span> </a>
+      </div>
+      <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <i class="fas fa-bars"></i>
+      </button>
+      <nav class="navbar-links" id="navbarMenu">
+        {# Add 'active' class dynamically if possible, requires passing active_page from Flask #}
+        {# Example: <a href="..." class="{{ 'active' if active_page == 'prebuilts' else '' }}"> #}
+        <a href="{{ url_for('prebuilts') }}"><i class="fas fa-desktop"></i> Prebuilt PCs</a>
+        <a href="{{ url_for('custom') }}"><i class="fas fa-tools"></i> Custom Build</a>
+        <a href="{{ url_for('support_ticket') }}"><i class="fas fa-headset"></i> Tech Support</a>
+        <a href="{{ url_for('terms') }}"><i class="fas fa-file-contract"></i> Terms</a>
+        {# Add Admin link if admin is logged in #}
+        {% if session.get('admin_logged_in') %}
+            <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-user-shield"></i> Admin</a>
+            <a href="{{ url_for('admin_logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        {% endif %}
+      </nav>
     </div>
-    <nav class="navbar-links">
-      <a href="{{ url_for('prebuilts') }}"><i class="fas fa-desktop"></i> Prebuilt PCs</a>
-      <a href="{{ url_for('custom') }}"><i class="fas fa-tools"></i> Custom Build</a>
-      <a href="{{ url_for('support_ticket') }}"><i class="fas fa-headset"></i> Tech Support</a>
-      <a href="{{ url_for('terms') }}"><i class="fas fa-file-contract"></i> Terms</a>
-    </nav>
   </header>
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <div class="flashes">
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
-
+  {# Flash messages moved inside main container for consistent width #}
   <main>
-    {% block content %}{% endblock %}
+    <div class="container"> {# Wrap main content in container #}
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flashes">
+            {% for category, message in messages %}
+              {# Map Flask categories (success, warning, error/danger) to CSS classes #}
+              {% set alert_class = 'info' %} {# Default to info #}
+              {% if category == 'success' %}{% set alert_class = 'success' %}
+              {% elif category == 'warning' %}{% set alert_class = 'warning' %}
+              {% elif category == 'danger' or category == 'error' %}{% set alert_class = 'danger' %}
+              {% endif %}
+              <div class="alert alert-{{ alert_class }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </div>
   </main>
 
   <footer>
-    <p>&copy; 2025 John's Easy Tech | Built with Passion</p>
+    <div class="container"> {# Wrap footer content in container #}
+      <p>&copy; {{ current_year | default(2025) }} John's Easy Tech | Built with <i class="fas fa-heart text-primary"></i> Passion</p>
+      {# Add more footer links if needed #}
+      {# <nav> <a href="#">Privacy Policy</a> | <a href="#">Contact</a> </nav> #}
+    </div>
   </footer>
 
-<div id="loading-spinner" style="display:none;">
-  <div class="spinner"></div>
-</div>
+  {# Loading Spinner - use classes to control visibility #}
+  <div id="loading-spinner" class="loading-overlay is-hidden">
+    <div class="spinner"></div>
+  </div>
 
 <script>
-  const forms = document.querySelectorAll('form');
-  forms.forEach(form => {
-    form.addEventListener('submit', () => {
-      document.getElementById('loading-spinner').style.display = 'flex';
-    });
-  });
-</script>
+  // Mobile Navbar Toggle
+  const navbarToggle = document.getElementById('navbarToggle');
+  const navbarMenu = document.getElementById('navbarMenu');
 
+  if (navbarToggle && navbarMenu) {
+    navbarToggle.addEventListener('click', () => {
+      navbarMenu.classList.toggle('is-active');
+      // Toggle aria-expanded attribute for accessibility
+      const isExpanded = navbarMenu.classList.contains('is-active');
+      navbarToggle.setAttribute('aria-expanded', isExpanded);
+    });
+  }
+
+  // Loading Spinner on Form Submit
+  const forms = document.querySelectorAll('form');
+  const loadingSpinner = document.getElementById('loading-spinner');
+
+  if (loadingSpinner) {
+    forms.forEach(form => {
+      form.addEventListener('submit', (event) => {
+        // Basic check: don't show spinner for forms with 'no-spinner' class if needed
+        if (!form.classList.contains('no-spinner')) {
+          loadingSpinner.classList.remove('is-hidden');
+          loadingSpinner.classList.add('is-visible');
+
+          // Optional: Prevent double-submit, disable submit button
+          const submitButton = form.querySelector('button[type="submit"]');
+          if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.style.opacity = '0.7';
+          }
+
+          // Optional: Hide spinner after a delay in case navigation fails?
+          // setTimeout(() => {
+          //   loadingSpinner.classList.remove('is-visible');
+          //   loadingSpinner.classList.add('is-hidden');
+          //    if (submitButton) submitButton.disabled = false;
+          // }, 8000); // Hide after 8 seconds failsafe
+        }
+      });
+    });
+  }
+
+  // Optional: Hide spinner if user navigates back using browser buttons
+  // This might hide it too early if the server takes time to respond.
+  window.addEventListener('pageshow', function(event) {
+    if (loadingSpinner && loadingSpinner.classList.contains('is-visible')) {
+       loadingSpinner.classList.remove('is-visible');
+       loadingSpinner.classList.add('is-hidden');
+       // Re-enable submit buttons if needed (might be complex to track which one)
+       forms.forEach(form => {
+         const submitButton = form.querySelector('button[type="submit"]');
+         if (submitButton) submitButton.disabled = false;
+       });
+    }
+  });
+
+
+</script>
 
 </body>
 </html>

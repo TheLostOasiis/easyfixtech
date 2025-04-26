@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Manage Support Tickets - Admin - {{ super() }}{% endblock %}
+
+{% block content %}
+<h2><i class="fas fa-headset"></i> Manage Support Tickets</h2>
+<p class="text-muted">View and manage user support requests.</p>
+
+{# Filtering/Search Controls #}
+<div class="card mb-8">
+    <form method="GET" action="{{ url_for('admin_view_tickets') }}" class="ticket-filters no-spinner">
+        <div class="filter-group">
+            <label for="status">Filter by Status:</label>
+            <select name="status" id="status" onchange="this.form.submit()">
+                <option value="all" {% if ticket_status_filter == 'all' %}selected{% endif %}>All Tickets</option>
+                <option value="open" {% if ticket_status_filter == 'open' %}selected{% endif %}>Open Only</option>
+                <option value="closed" {% if ticket_status_filter == 'closed' %}selected{% endif %}>Closed Only</option>
+            </select>
+        </div>
+         <div class="filter-group">
+            <label for="search">Search:</label>
+            <input type="search" name="search" id="search" value="{{ search_query | default('') }}" placeholder="Search name, email, issue...">
+         </div>
+         <button type="submit" class="btn btn-secondary btn-sm">Apply Filters</button>
+    </form>
+</div>
+
+
+{# Ticket Listing - Using cards for a more modern feel than a table #}
+<div class="ticket-list">
+    {% if tickets %}
+        {% for ticket in tickets %}
+            <div class="card ticket-item status-{{ ticket.status | lower }}">
+                <div class="ticket-item__header">
+                    <span class="ticket-id">ID: {{ ticket.id[:8] }}...</span>
+                    <span class="status-badge status-{{ ticket.status | lower }}">{{ ticket.status | capitalize }}</span>
+                </div>
+                <div class="ticket-item__body">
+                    <p><strong>Name:</strong> {{ ticket.name }}</p>
+                    <p><strong>Email:</strong> {{ ticket.email }}</p>
+                    <p><strong>Submitted:</strong> {{ ticket.timestamp }}</p>
+                    <p><strong>Issue:</strong></p>
+                    <p class="ticket-issue">{{ ticket.issue | truncate(150) }}</p> {# Truncate long issues #}
+                </div>
+                <div class="ticket-item__actions">
+                    {# View Details Link (if you create a single ticket view) #}
+                    {# <a href="{{ url_for('admin_view_single_ticket', ticket_id=ticket.id) }}" class="btn btn-secondary btn-sm">Details</a> #}
+
+                    {% if ticket.status == 'open' %}
+                        <form action="{{ url_for('admin_close_ticket', ticket_id=ticket.id) }}" method="POST" class="no-spinner">
+                            {# Pass current filters back to maintain state after closing #}
+                            <input type="hidden" name="status_filter" value="{{ ticket_status_filter }}">
+                            <input type="hidden" name="search_query" value="{{ search_query }}">
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <i class="fas fa-check-circle"></i> Mark as Closed
+                            </button>
+                        </form>
+                    {% endif %}
+                     {# Add delete button if needed #}
+                     {# <form action="..." method="POST"><button>Delete</button></form> #}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted text-center mt-8">No tickets found matching the current filters.</p>
+    {% endif %}
+</div>
+
+{# Add Pagination here if needed #}
+
+{% endblock %}

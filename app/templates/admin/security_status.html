@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Security Status - Admin - {{ super() }}{% endblock %}
+
+{% block content %}
+<h2><i class="fas fa-shield-alt"></i> Security Status</h2>
+
+{% if status and status.timestamp %}
+    <p class="text-muted">Last check performed on: {{ status.timestamp | format_datetime }}</p> {# Assumes format_datetime filter or adjust #}
+
+    {% if status.checks_performed %}
+        <div class="status-checks-list mt-6">
+            {% for check in status.checks_performed %}
+                <div class="card status-check-item status-{{ check.status | lower }}"> {# Card for each check #}
+                    <div class="status-check-item__header">
+                        {# Determine icon based on status #}
+                        {% if check.status == 'OK' %}
+                            <i class="fas fa-check-circle text-success"></i>
+                        {% elif check.status == 'WARNING' %}
+                            <i class="fas fa-exclamation-triangle text-warning"></i>
+                        {% elif check.status == 'CRITICAL' %}
+                            <i class="fas fa-times-circle text-danger"></i>
+                        {% else %}
+                             <i class="fas fa-question-circle text-muted"></i>
+                        {% endif %}
+                        <strong class="ml-2">{{ check.name }}</strong>
+                        <span class="status-badge status-{{ check.status | lower }}">{{ check.status }}</span>
+                    </div>
+                    <div class="status-check-item__details">
+                        <p>{{ check.details }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">No specific checks were recorded in the last run.</p>
+    {% endif %}
+
+    <div class="mt-8 text-center">
+         <form action="{{ url_for('run_security_check') }}" method="POST">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-sync-alt"></i> Run Checks Again</button>
+         </form>
+    </div>
+
+{% else %}
+    <div class="card text-center mt-8">
+        <p class="text-muted">{{ status.message | default('Security status information is unavailable.') }}</p>
+         <form action="{{ url_for('run_security_check') }}" method="POST" class="mt-4">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-play-circle"></i> Run Initial Check</button>
+         </form>
+    </div>
+{% endif %}
+
+{% endblock %}
+
+{# Add Jinja filter for datetime formatting if needed in your Flask app setup #}
+{# Example:
+from babel.dates import format_datetime
+app.jinja_env.filters['format_datetime'] = lambda value, format='medium': format_datetime(value, format) if value else ''
+#}

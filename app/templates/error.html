@@ -1,7 +1,11 @@
-<!-- app/templates/error.html -->
 {% extends 'base.html' %}
+{% block title %}Error {{ error_code }} - {{ super() }}{% endblock %}
+
 {% block content %}
-<h2>Error {{ error_code }}</h2>
-<p>{{ error_message }}</p>
-<a class="btn" href="{{ url_for('index') }}"><i class="fas fa-home"></i> Return to Home</a>
+<div class="text-center" style="padding: var(--spacing-12) 0;"> {# Add vertical padding and center #}
+    <i class="fas fa-exclamation-triangle fa-4x text-danger mb-4"></i> {# Larger error icon #}
+    <h2>Error {{ error_code | default('Occurred') }}</h2>
+    <p class="text-muted text-lg mb-8">{{ error_message | default("Something went wrong.") }}</p> {# Larger text #}
+    <a class="btn btn-primary" href="{{ url_for('index') }}"><i class="fas fa-home"></i> Return to Home</a>
+</div>
 {% endblock %}

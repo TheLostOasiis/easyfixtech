@@ -1,24 +1,40 @@
-<!-- app/templates/prebuilts.html -->
 {% extends 'base.html' %}
+{% block title %}Prebuilt PCs - {{ super() }}{% endblock %}
+
 {% block content %}
 <h2>Browse Our Prebuilt PCs</h2>
-{% for category, pcs in categorized_pcs.items() %}
-  <h3>{{ category }}</h3>
-  <div class="pc-list">
-    {% for pc in pcs %}
-      <div class="pc-card">
-        <img src="{{ url_for('static', filename=pc.image.replace('static/', '')) }}" alt="{{ pc.name }}">
-        <h4>{{ pc.name }}</h4>
-        <p>{{ pc.description }}</p>
-        <p><strong>Price:</strong> ${{ pc.price }}</p>
-        <form action="{{ url_for('create_checkout_session') }}" method="POST">
-          <input type="hidden" name="item" value="{{ pc.name }}">
-          <input type="hidden" name="amount" value="{{ pc.price }}">
-          <input type="email" name="email" placeholder="Enter your email" required>
-          <button type="submit"><i class="fas fa-shopping-cart"></i> Buy Now</button>
-        </form>
+
+{% if categorized_pcs %}
+  {% for category, pcs in categorized_pcs.items() %}
+    {% if pcs %} {# Only show category if there are PCs in it #}
+      <h3>{{ category }}</h3>
+      <div class="pc-list">
+        {% for pc in pcs %}
+          <div class="card pc-card"> {# Use base card class #}
+            <div class="pc-card__image-wrapper">
+                <img src="{{ url_for('static', filename=pc.image.replace('static/', '')) if pc.image else url_for('static', filename='images/default.jpg') }}" alt="{{ pc.name }}">
+            </div>
+            <div class="pc-card__body">
+              <h4 class="pc-card__title">{{ pc.name }}</h4>
+              <p class="pc-card__description">{{ pc.description | default('High-quality prebuilt PC.') }}</p>
+              <p class="pc-card__price">${{ "%.2f"|format(pc.price) }}</p> {# Ensure 2 decimal places #}
+
+              {# Use card-specific form class #}
+              <form class="pc-card__form" action="{{ url_for('create_checkout_session') }}" method="POST">
+                <input type="hidden" name="item" value="{{ pc.name }}">
+                <input type="hidden" name="amount" value="{{ pc.price }}">
+                {# Basic email validation is done server-side, required attribute helps client-side #}
+                <input type="email" name="email" placeholder="Your Email for Receipt" required aria-label="Your Email for Receipt">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-shopping-cart"></i> Buy Now</button>
+              </form>
+            </div>
+          </div>
+        {% endfor %}
       </div>
-    {% endfor %}
-  </div>
-{% endfor %}
+    {% endif %}
+  {% endfor %}
+{% else %}
+    <p class="text-muted text-center mt-8">No prebuilt PCs are available at the moment. Please check back later!</p>
+{% endif %}
+
 {% endblock %}

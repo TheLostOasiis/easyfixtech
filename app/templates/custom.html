@@ -1,6 +1,12 @@
-<!-- app/templates/custom.html -->
 {% extends 'base.html' %}
+{% block title %}Custom PC Builds - {{ super() }}{% endblock %}
+
 {% block content %}
-<h2>Request a Custom Build</h2>
-<p>Coming soon! You'll be able to request a fully customized build tailored to your needs.</p>
+<div class="text-center" style="padding: var(--spacing-10) 0;">
+    <i class="fas fa-tools fa-3x text-primary mb-4"></i>
+    <h2>Request a Custom Build</h2>
+    <p class="text-muted text-lg mb-8">Want a PC tailored exactly to your needs and budget? <br> Our custom build request feature is coming soon!</p>
+    {# Optional: Add a contact link or preliminary form #}
+    <p>In the meantime, feel free to <a href="{{ url_for('support_ticket') }}">contact our support team</a> with your requirements.</p>
+</div>
 {% endblock %}

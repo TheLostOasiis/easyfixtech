@@ -1,17 +1,54 @@
-<!-- app/templates/thankyou.html -->
 {% extends 'base.html' %}
+{% block title %}Thank You for Your Order! - {{ super() }}{% endblock %}
+
 {% block content %}
-<h2>Thank You for Your Purchase!</h2>
+<div class="card" style="max-width: 650px; margin: var(--spacing-8) auto;"> {# Wrap content in a card #}
+    <div class="text-center mb-8">
+        <i class="fas fa-check-circle fa-3x text-success"></i> {# Success icon #}
+        <h2 style="margin-top: var(--spacing-4);">Thank You for Your Purchase!</h2>
+        <p class="text-muted">Your order has been successfully processed.</p>
+    </div>
 
-<p><strong>Order ID:</strong> {{ order.order_id }}</p>
-<p><strong>Item:</strong> {{ order.item }}</p>
-<p><strong>Amount Paid:</strong> ${{ order.amount }}</p>
-<p><strong>Date:</strong> {{ order.timestamp }}</p>
-<p><strong>Email:</strong> {{ order.email }}</p>
+    {% if order %}
+        {# Use a definition list for better semantics #}
+        <dl style="line-height: 1.8;">
+            <dt>Order ID:</dt>
+            <dd>{{ order.order_id | default('N/A') }}</dd>
 
-{% if session.get('last_receipt_path') %}
-  <a class="btn" href="{{ url_for('download_receipt') }}"><i class="fas fa-file-download"></i> Download Your Receipt</a>
-{% else %}
-  <p>No receipt available.</p>
-{% endif %}
+            <dt>Item:</dt>
+            <dd>{{ order.item | default('N/A') }}</dd>
+
+            <dt>Amount Paid:</dt>
+            <dd>${{ "%.2f"|format(order.amount) if order.amount is defined else 'N/A' }}</dd>
+
+            <dt>Date:</dt>
+            <dd>{{ order.timestamp | default('N/A') }}</dd>
+
+            <dt>Email Sent To:</dt>
+            <dd>{{ order.email | default('N/A') }}</dd>
+        </dl>
+
+        <hr> {# Add a separator #}
+
+        <div class="text-center mt-8">
+            {% if session.get('last_receipt_path') %}
+                <p class="text-muted mb-4">You can download your PDF receipt below.</p>
+                <a class="btn btn-primary" href="{{ url_for('download_receipt') }}">
+                    <i class="fas fa-file-download"></i> Download Receipt (PDF)
+                </a>
+            {% else %}
+                <p class="text-muted">Your receipt has been emailed to you. If you don't receive it, please contact support.</p>
+            {% endif %}
+            <a href="{{ url_for('prebuilts') }}" class="btn btn-secondary mt-4">
+                <i class="fas fa-arrow-left"></i> Continue Shopping
+            </a>
+        </div>
+
+    {% else %}
+        <p class="text-danger text-center">Order details could not be loaded. Please check your email or contact support.</p>
+        <div class="text-center mt-4">
+             <a href="{{ url_for('index') }}" class="btn btn-secondary"><i class="fas fa-home"></i> Return Home</a>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

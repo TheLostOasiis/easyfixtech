@@ -1,98 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Manage PreBuilts - Admin</title>
-  <style>
-    body {
-      background: linear-gradient(to bottom right, #000000, #0a0a23, #001f3f);
-      color: white;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      padding: 30px;
-    }
+{% extends 'base.html' %}
+{% block title %}Manage Products - Admin - {{ super() }}{% endblock %}
 
-    .form-box {
-      background-color: #111a2e;
-      padding: 20px;
-      border-radius: 15px;
-      margin-bottom: 30px;
-      max-width: 600px;
-      margin: auto;
-    }
+{% block content %}
+<h2><i class="fas fa-cogs"></i> Manage Prebuilt PCs</h2>
+<p class="text-muted">Add new products and view existing inventory.</p>
 
-    .form-box input, .form-box textarea, .form-box select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 8px;
-    }
-
-    .form-box button {
-      margin-top: 15px;
-      padding: 12px;
-      background-color: #66ccff;
-      border: none;
-      color: #001f3f;
-      font-weight: bold;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    .form-box button:hover {
-      background-color: #3399cc;
-    }
-
-    .category-section {
-      margin-top: 40px;
-    }
-
-    h2 {
-      text-align: center;
-      color: #66ccff;
-    }
-
-    .product {
-      background-color: #111a2e;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-      box-shadow: 0 0 10px #000000aa;
-      max-width: 600px;
-      margin: 15px auto;
-    }
-  </style>
-</head>
-<body>
-  <h2>Add New PreBuilt PC</h2>
-  <div class="form-box">
-    <form method="POST">
-      <input type="text" name="name" placeholder="PC Name" required>
-      <textarea name="description" placeholder="Description" required></textarea>
-      <input type="text" name="price" placeholder="Price in USD" required>
-      <input type="text" name="image" placeholder="Image URL (optional)">
-      <select name="category">
-        {% for cat in categories %}
-          <option value="{{ cat }}">{{ cat }}</option>
-        {% endfor %}
-      </select>
-      <button type="submit">Add Product</button>
-    </form>
-  </div>
-
-  {% for cat, pcs in categorized_pcs.items() %}
-    <div class="category-section">
-      <h2>{{ cat }} PCs</h2>
-      {% for pc in pcs %}
-        <div class="product">
-          <strong>{{ pc.name }}</strong> — ${{ "%.2f"|format(pc.price) }}<br>
-          <p>{{ pc.description }}</p>
-          <small>Category: {{ pc.category }}</small>
+{# Add Product Form - styled consistently #}
+<section class="card mt-8 mb-12"> {# Wrap form in a card #}
+    <h3>Add New Prebuilt PC</h3>
+    <form method="POST" action="{{ url_for('admin_add_product') }}"> {# Ensure action points correctly #}
+        <div class="form-group">
+            <label for="name">PC Name</label>
+            <input type="text" id="name" name="name" placeholder="e.g., Vortex Gamer XT" required>
         </div>
-      {% else %}
-        <p style="text-align: center;">No PCs in this category yet.</p>
-      {% endfor %}
-    </div>
-  {% endfor %}
-</body>
-</html>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" placeholder="Key specs and features..." required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="price">Price (USD)</label>
+            <input type="number" id="price" name="price" placeholder="e.g., 1499.99" step="0.01" min="0" required>
+        </div>
+         <div class="form-group">
+            <label for="image">Image Path (relative to static/)</label>
+            <input type="text" id="image" name="image" placeholder="e.g., images/vortex-gamer.jpg (Optional)">
+            <small class="text-muted">Leave blank to use default image.</small>
+        </div>
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" name="category">
+                {% for cat in categories %}
+                    <option value="{{ cat }}" {% if loop.first %}selected{% endif %}>{{ cat }}</option>
+                {% else %}
+                    <option value="General Use">General Use</option> {# Default if no categories passed #}
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Product</button>
+    </form>
+</section>
+
+<hr>
+
+{# List Existing Products #}
+<h3>Existing Products</h3>
+{% if categorized_pcs %}
+    {% for cat, pcs in categorized_pcs.items() %}
+        {% if pcs %} {# Only show category if there are PCs #}
+            <h4 class="mt-8 mb-4">{{ cat }}</h4>
+            <div class="product-list-admin"> {# Use a container for the list #}
+                {% for pc in pcs %}
+                    <div class="card product-item-admin"> {# Simple card for each product #}
+                        <div class="product-item-admin__details">
+                            <strong>{{ pc.name }}</strong> – <span class="text-secondary">${{ "%.2f"|format(pc.price) }}</span><br>
+                            <small class="text-muted">{{ pc.category }} | ID: {{ pc.id[:8] if pc.id else 'N/A' }}...</small>
+                            <p class="mt-1 fs-sm">{{ pc.description | truncate(100) }}</p> {# Show truncated description #}
+                        </div>
+                            <div class="product-item-admin__actions">
+                            {# Add Edit button/link here #}
+                            <a href="{{ url_for('admin_edit_product_form', product_id=pc.id) }}" class="btn btn-secondary btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            {# Delete Form - use POST method #}
+                            <form action="{{ url_for('admin_delete_product', product_id=pc.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete {{ pc.name }}?');" class="no-spinner">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% else %}
+    <p class="text-muted text-center mt-8">No products found.</p>
+{% endif %}
+
+{% endblock %}
