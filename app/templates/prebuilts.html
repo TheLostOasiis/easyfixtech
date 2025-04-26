@@ -25,6 +25,17 @@
                 <input type="hidden" name="amount" value="{{ pc.price }}">
                 {# Basic email validation is done server-side, required attribute helps client-side #}
                 <input type="email" name="email" placeholder="Your Email for Receipt" required aria-label="Your Email for Receipt">
+
+                {# ** START: Added Terms Checkbox ** #}
+                <div class="form-group form-group-checkbox">
+                    <input type="checkbox" id="terms-agree-{{ pc.id }}" name="terms_agree" value="yes" required>
+                    <label for="terms-agree-{{ pc.id }}">
+                        I have read and agree to the
+                        <a href="{{ url_for('terms') }}" target="_blank">Terms and Conditions</a>.
+                    </label>
+                </div>
+                {# ** END: Added Terms Checkbox ** #}
+
                 <button type="submit" class="btn btn-primary"><i class="fas fa-shopping-cart"></i> Buy Now</button>
               </form>
             </div>

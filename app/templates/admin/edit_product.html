@@ -28,15 +28,25 @@
         </div>
         <div class="form-group">
             <label for="category">Category</label>
-            <select id="category" name="category">
+            {# Input field pre-filled with current category, allows editing/typing new #}
+            <input list="category-suggestions" id="category" name="category"
+                   value="{{ product.category | default('General Use') }}"
+                   placeholder="Select or type new category" required>
+
+            {# Datalist provides suggestions based on existing categories #}
+            <datalist id="category-suggestions">
                 {% for cat in categories %}
-                    {# Mark the current category as selected #}
-                    <option value="{{ cat }}" {% if cat == product.category %}selected{% endif %}>{{ cat }}</option>
+                    <option value="{{ cat }}">
                 {% else %}
-                    <option value="General Use">General Use</option> {# Fallback #}
+                    {# Provide some common defaults #}
+                    <option value="General Use">
+                    <option value="Gaming">
+                    <option value="Programming">
+                    <option value="Video Editing">
                 {% endfor %}
-            </select>
-        </div>
+            </datalist>
+             <small class="text-muted">Select from the list or type to change/add a category.</small>
+       </div>
 
         <div style="display: flex; gap: var(--spacing-4); margin-top: var(--spacing-4);"> {# Button row #}
             <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>

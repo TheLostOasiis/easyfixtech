@@ -26,15 +26,27 @@
             <input type="text" id="image" name="image" placeholder="e.g., images/vortex-gamer.jpg (Optional)">
             <small class="text-muted">Leave blank to use default image.</small>
         </div>
-        <div class="form-group">
+<div class="form-group">
             <label for="category">Category</label>
-            <select id="category" name="category">
+            {# Input field allows typing a new category #}
+            <input list="category-suggestions" id="category" name="category"
+                   placeholder="Select or type new category" required
+                   {# Optionally pre-select 'General Use' if list is empty or it makes sense #}
+                   value="{% if not categories %}General Use{% endif %}">
+
+            {# Datalist provides suggestions based on existing categories #}
+            <datalist id="category-suggestions">
                 {% for cat in categories %}
-                    <option value="{{ cat }}" {% if loop.first %}selected{% endif %}>{{ cat }}</option>
+                    <option value="{{ cat }}">
                 {% else %}
-                    <option value="General Use">General Use</option> {# Default if no categories passed #}
+                    {# Provide some common defaults as suggestions if no products exist yet #}
+                    <option value="General Use">
+                    <option value="Gaming">
+                    <option value="Programming">
+                    <option value="Video Editing">
                 {% endfor %}
-            </select>
+            </datalist>
+            <small class="text-muted">Select from the list or type a new category name.</small>
         </div>
         <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Product</button>
     </form>

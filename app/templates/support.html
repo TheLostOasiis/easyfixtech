@@ -21,6 +21,17 @@
          <label for="issue">Describe Your Issue</label>
         <textarea id="issue" name="issue" placeholder="Please provide as much detail as possible..." required>{{ issue | default('') }}</textarea>
       </div>
+
+      {# ** START: Added Terms Checkbox ** #}
+      <div class="form-group form-group-checkbox">
+          <input type="checkbox" id="terms-agree-support" name="terms_agree" value="yes" required>
+          <label for="terms-agree-support">
+              I have read and agree to the
+              <a href="{{ url_for('terms') }}" target="_blank">Terms and Conditions</a>, including the Tech Support Agreement.
+          </label>
+      </div>
+      {# ** END: Added Terms Checkbox ** #}
+
       <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit Support Request</button>
     </form>
   </section>

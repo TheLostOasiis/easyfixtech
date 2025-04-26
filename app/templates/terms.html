@@ -1,109 +1,273 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Customer Agreements & Policies - John's Easy Tech</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      background: linear-gradient(to bottom right, #000000, #0a0a23, #001f3f);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: white;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      color: #66ccff;
-    }
-    details {
-      background-color: #111a2e;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
-    summary {
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      color: #66ccff;
-    }
-    p, li {
-      margin: 8px 0;
-    }
-    ul {
-      padding-left: 20px;
-    }
-    strong {
-      color: #33cc99;
-    }
-  </style>
-</head>
-<body>
-  <h1>Customer Agreements & Policies</h1>
+{% extends 'base.html' %}
+{% block title %}Customer Agreements and Policies - {{ super() }}{% endblock %}
 
-  <details open>
-    <summary>Terms and Conditions</summary>
-    <p><strong>Acceptance of Terms:</strong> By placing an order or using any services from John's Easy Tech ("we", "us", or "our"), you ("the customer" or "you") acknowledge that you have read, understood, and agree to these Terms and Conditions, as well as our Warranty Policy, Legal Disclaimers, and Tech Support Agreement. These terms form a binding agreement between you and John's Easy Tech for all products and services we provide.</p>
-    <p><strong>Eligibility (Age Requirement):</strong> You must be at least 18 years old to purchase products or services from us. If you are under 18, you may only make a purchase with the involvement and consent of a parent or legal guardian...</p>
-    <p><strong>Customer Information:</strong> When placing an order, you agree to provide accurate and complete information...</p>
-    <p><strong>Orders and Payment:</strong> All orders must be placed through our online platform. Payments are processed securely via Stripe...</p>
-    <p><strong>Custom-Built Products:</strong> Our PCs are custom-built to order based on the specifications you select...</p>
-    <p><strong>Shipping and Delivery:</strong> We will inform you of the estimated build time and shipping timeline...</p>
-    <p><strong>Warranty Service:</strong> We offer an optional 1-Year Extended Warranty...</p>
-    <p><strong>Returns and Refunds:</strong> Except as expressly provided under the Warranty Policy...</p>
-    <p><strong>Tech Support Services:</strong> If you request technical support services...</p>
-    <p><strong>Limitation of Liability:</strong> You acknowledge and agree that our liability to you is limited...</p>
-    <p><strong>Indemnification:</strong> You agree to indemnify and hold harmless John's Easy Tech...</p>
-    <p><strong>Governing Law and Disputes:</strong> This agreement and any sales or services provided by John's Easy Tech are governed by the laws of the State of Indiana...</p>
-    <p><strong>Changes to Terms:</strong> We reserve the right to update or modify these Terms and Conditions...</p>
-    <p><strong>Severability:</strong> If any provision of these Terms and Conditions is found to be invalid...</p>
-    <p><strong>Entire Agreement:</strong> These Terms and Conditions, along with the Warranty Policy, Legal Disclaimers, and Tech Support Agreement, constitute the entire agreement...</p>
-  </details>
+{% block content %}
+<h1><i class="fas fa-file-contract"></i> Customer Agreements and Policies</h1>
+{# Use the date provided in the text. Update this manually when terms change. #}
+<p class="text-muted">Last Updated: April 24, 2025</p>
+<hr>
 
-  <details>
-    <summary>Warranty Policy</summary>
-    <p><strong>1-Year Limited Warranty (Optional Purchase):</strong> We offer an optional one-year limited warranty for an additional fee of $30. This Warranty Policy applies only if you have purchased the 1-Year Extended Warranty for your custom-built PC at the time of sale...</p>
-    <p><strong>What is Covered:</strong> This warranty covers defects in materials or workmanship...</p>
-    <ul>
-      <li>Problems caused by misuse, abuse, neglect, or improper operation</li>
-      <li>Damage resulting from unauthorized repairs or modifications</li>
-      <li>Intentional damage</li>
-      <li>Software issues, viruses/malware, or configuration problems</li>
-      <li>Normal wear and tear or cosmetic damage</li>
-      <li>Any loss of data or software</li>
-    </ul>
-    <p><strong>Claim Procedure:</strong> To make a claim under this warranty, contact John's Easy Tech...</p>
-    <p><strong>Repair Process:</strong> If a repair or replacement is approved...</p>
-    <p><strong>Exclusive Remedy:</strong> Repair or replacement of defective parts is your sole and exclusive remedy...</p>
-  </details>
+<p>John's Easy Tech is a small computer-building and tech support business based in Indiana, USA, operating primarily online. We sell custom-built PCs and offer technical support services. All purchases are made through our website with payment processing by Stripe. Customers are required to agree to the following terms and policies (via a signed agreement and checkbox confirmation) before making a purchase or using our services.</p>
 
-  <details>
-    <summary>Legal Disclaimers</summary>
-    <p><strong>Product Condition ("As Is" Sale):</strong> Except for the express obligations stated in the above Warranty Policy (if purchased), all products and services are provided on an "as is" and "as available" basis...</p>
-    <p><strong>Limitation of Liability:</strong> To the maximum extent permitted by law, in no event shall John's Easy Tech or its owner be liable for any indirect, incidental, special, consequential, or punitive damages...</p>
-    <p><strong>No Liability for Data or Software Issues:</strong> John's Easy Tech is not responsible for any data loss or software corruption...</p>
-    <p><strong>Third-Party Products and Warranties:</strong> The custom PCs we build may include third-party components...</p>
-    <p><strong>Tech Support Limitations:</strong> Any technical support services provided are on a best-effort basis...</p>
-    <p><strong>Not an Authorized Service Center:</strong> John's Easy Tech is not an authorized service provider or reseller for any major companies...</p>
-    <p><strong>Independence and No Insurance:</strong> John's Easy Tech does not currently carry business liability insurance...</p>
-    <p><strong>Legal Compliance:</strong> You are responsible for using any products and services from John's Easy Tech in compliance with all applicable laws and regulations...</p>
-    <p><strong>Limitation on Claims:</strong> Any claim or cause of action must be filed within one (1) year...</p>
-  </details>
+{# Terms and Conditions Section #}
+<h2 class="mt-8">Terms and Conditions</h2>
+<ol class="terms-list">
+    <li>
+        <strong>Acceptance of Terms:</strong>
+        <p>By placing an order or using any services from John's Easy Tech ("we", "us", or "our"), you ("the customer" or "you") acknowledge that you have read, understood, and agree to these Terms and Conditions, as well as our Warranty Policy, Legal Disclaimers, and Tech Support Agreement. These terms form a binding agreement between you and John's Easy Tech for all products and services we provide.</p>
+    </li>
+    <li>
+        <strong>Eligibility (Age Requirement):</strong>
+        <p>You must be at least 18 years old to purchase products or services from us. If you are under 18, you may only make a purchase with the involvement and consent of a parent or legal guardian. By agreeing to these terms, you confirm that you meet this age requirement or have obtained the necessary parental/guardian consent.</p>
+    </li>
+    <li>
+        <strong>Customer Information:</strong>
+        <p>When placing an order, you agree to provide accurate and complete information, including your name, email address, shipping address (if applicable), and payment details. You are responsible for maintaining the confidentiality of your account (if one is created) and for all activities that occur under your account.</p>
+    </li>
+    <li>
+        <strong>Orders and Payment:</strong>
+        <p>All orders must be placed through our online platform. Payments are processed securely via Stripe, and by submitting payment information you authorize us to charge the specified amount for your order. We do not store full credit card numbers or sensitive payment data on our servers. Prices are listed in U.S. dollars and do not include applicable taxes or shipping fees, which will be calculated at checkout. We reserve the right to decline or cancel any order if payment is not successfully processed or if fraud is suspected.</p>
+    </li>
+    <li>
+        <strong>Custom-Built Products:</strong>
+        <p>Our PCs are custom-built to order based on the specifications you select. Once an order is placed and payment is confirmed, we will begin the build process. <strong>All sales are final</strong> – due to the custom nature of our products, orders cannot be cancelled or refunded once we have started assembly. Please review your order details carefully before submission.</p>
+    </li>
+    <li>
+        <strong>Shipping and Delivery:</strong>
+        <p>We will inform you of the estimated build time and shipping timeline for your custom PC. We ship products via reputable carriers to the address provided at checkout. Title and risk of loss pass to you upon our delivery of the product to the carrier. Please ensure your shipping information is correct; we are not responsible for delays or losses due to incorrect addresses. If a shipment is lost or arrives damaged, notify us immediately so we can assist in filing a claim with the carrier; please note that shipping costs are non-refundable.</p>
+    </li>
+    <li>
+        <strong>Warranty Service:</strong>
+        <p>We offer an optional 1-Year Extended Warranty for your custom PC as described in our Warranty Policy (below). If you purchase this warranty, we will honor repair or replacement obligations as set forth in that policy. If you do not purchase the warranty, any repairs or support after delivery will be subject to additional charges. No other warranty is provided unless explicitly stated.</p>
+    </li>
+    <li>
+        <strong>Returns and Refunds:</strong>
+        <p>Except as expressly provided under the Warranty Policy, we do not accept returns or offer refunds for custom-built PCs or services. <strong>All sales are final</strong> and products are sold "as is" (with any express warranties or guarantees outlined in these terms or the Warranty Policy). If a defect or issue is covered by the Warranty Policy, we will repair or replace the product per that policy. Otherwise, no returns, exchanges, or refunds will be granted.</p>
+    </li>
+    <li>
+        <strong>Tech Support Services:</strong>
+        <p>If you request technical support services (either included with a purchase or purchased separately), such services will be governed by our Tech Support Agreement (see below). By using our tech support, you agree to the specific terms in that agreement, including any applicable fees and limitations of service.</p>
+    </li>
+    <li>
+        <strong>Limitation of Liability:</strong>
+        <p>You acknowledge and agree that our liability to you is limited as described in the "Legal Disclaimers" section of this document. In summary, to the maximum extent permitted by law, John's Easy Tech will not be liable for damages beyond the amount you paid us for the product or service in question, and we will not be liable for certain types of losses as described below.</p>
+    </li>
+    <li>
+        <strong>Indemnification:</strong>
+        <p>You agree to indemnify and hold harmless John's Easy Tech and its owner from any claims, losses, or damages arising out of your misuse of our products or services, your violation of these terms, or your violation of any law or rights of a third party. This means you will reimburse us for any costs or legal fees incurred due to such actions.</p>
+    </li>
+    <li>
+        <strong>Governing Law and Disputes:</strong>
+        <p>This agreement and any sales or services provided by John's Easy Tech are governed by the laws of the State of Indiana, without regard to its conflict of laws principles. You agree that any dispute or claim arising from your purchase or use of our services will be resolved exclusively in the state or federal courts located in Indiana. You consent to the personal jurisdiction of such courts.</p>
+    </li>
+    <li>
+        <strong>Changes to Terms:</strong>
+        <p>We reserve the right to update or modify these Terms and Conditions from time to time. If we make material changes, we will provide notice by updating the date at the bottom of this document or through our website. Continued use of our services or additional purchases after such changes constitutes acceptance of the revised terms.</p>
+    </li>
+    <li>
+        <strong>Severability:</strong>
+        <p>If any provision of these Terms and Conditions is found to be invalid or unenforceable by a court of competent jurisdiction, that provision will be severed, and the remaining provisions will remain in full force and effect.</p>
+    </li>
+    <li>
+        <strong>Entire Agreement:</strong>
+        <p>These Terms and Conditions, along with the Warranty Policy, Legal Disclaimers, and Tech Support Agreement, constitute the entire agreement between you and John's Easy Tech regarding your purchases and use of our services. They supersede any prior agreements or communications.</p>
+    </li>
+</ol>
 
-  <details>
-    <summary>Tech Support Agreement</summary>
-    <p><strong>Scope of Services:</strong> John's Easy Tech will provide technical support and troubleshooting services...</p>
-    <p><strong>Scheduling and Access:</strong> For on-site support, appointments will be scheduled...</p>
-    <p><strong>Customer Responsibilities:</strong> You are responsible for backing up all important data...</p>
-    <p><strong>Fees and Payment:</strong> Fees will be communicated before work begins and are due upon completion...</p>
-    <p><strong>No Guarantee of Fix:</strong> We do not guarantee that every problem will be fixed...</p>
-    <p><strong>Limitation of Liability (Support):</strong> John's Easy Tech is not liable for accidental damage or loss of data...</p>
-    <p><strong>Customer Conduct:</strong> You agree to treat our technician with respect...</p>
-    <p><strong>Remote Support Consent:</strong> You consent to the technician remotely accessing your computer for the duration of the session...</p>
-    <p><strong>Privacy and Confidentiality:</strong> Any information seen during support will be kept confidential...</p>
-    <p><strong>Third-Party Services/Software:</strong> We may recommend or install third-party tools, and you're responsible for proper licensing...</p>
-    <p><strong>Termination:</strong> You can terminate the session at any time, and payment is due for time already spent...</p>
-    <p><strong>Applicable Terms:</strong> This Tech Support Agreement is part of the overall Terms and Conditions...</p>
-  </details>
-</body>
-</html>
+{# Warranty Policy Section #}
+<h2 class="mt-8">Warranty Policy</h2>
+<p><strong>1-Year Limited Warranty (Optional Purchase):</strong> We offer an optional one-year limited warranty for an additional fee of $30. This Warranty Policy applies only if you have purchased the 1-Year Extended Warranty for your custom-built PC at the time of sale. The warranty provides the following:</p>
+<ol class="terms-list">
+    <li>
+        <strong>Warranty Coverage Period:</strong>
+        <p>The coverage period is one (1) year from the date of delivery of your custom PC. If you purchase the warranty, we will provide repair or replacement for covered hardware issues that arise during normal use within this period.</p>
+    </li>
+    <li>
+        <strong>What is Covered:</strong>
+        <p>This warranty covers defects in materials or workmanship of the components in your custom-built PC and any hardware malfunctions that occur under normal operating conditions. If your PC or any internal component fails within the one-year period due to a covered defect, John's Easy Tech will repair the issue or replace the faulty component at no additional charge (parts and labor included), subject to the exclusions below.</p>
+    </li>
+    <li>
+        <strong>Exclusions (What is Not Covered):</strong>
+        <p>This warranty does not cover:</p>
+        <ul class="sub-list"> {# Use nested UL for bullet points here #}
+            <li>Problems caused by misuse, abuse, neglect, or improper operation of the PC (e.g., physical damage, liquid damage, use of incorrect power supply).</li>
+            <li>Damage resulting from unauthorized repairs, modifications, or tampering. Any attempt to open, modify, or repair the PC or its components by anyone other than John's Easy Tech will void this warranty.</li>
+            <li>Intentional damage or any damage due to willful acts.</li>
+            <li>Software issues, viruses/malware, or configuration problems not stemming from a hardware defect.</li>
+            <li>Normal wear and tear or cosmetic damage that does not affect functionality.</li>
+            <li>Any loss of data or software. (Customers are responsible for backing up data; data recovery is not included in this warranty.)</li>
+        </ul>
+    </li>
+    <li>
+        <strong>No Coverage Without Warranty Purchase:</strong>
+        <p>If you did not purchase the 1-Year Extended Warranty, your product is sold as is without any guarantee of repair or replacement. You may still contact us for support or repairs, but such service will be subject to labor and parts fees.</p>
+    </li>
+    <li>
+        <strong>Claim Procedure:</strong>
+        <p>To make a claim under this warranty, you must contact John's Easy Tech at the email or phone number provided on our website within the warranty period. Please provide your name, contact information, order number, and a description of the issue. We may request diagnostic information or troubleshooting steps to identify the problem.</p>
+    </li>
+    <li>
+        <strong>Repair Process:</strong>
+        <p>If a repair or replacement is approved, we will instruct you on how to send the PC or the affected component to us (or, if you are local, to arrange a drop-off). You are responsible for properly packaging the product for shipment. We will cover the cost of return shipping to you for any repairs or replacements performed under warranty. We aim to repair or replace and return your PC as quickly as possible. Any replacement parts may be new or equivalent-to-new in performance.</p>
+    </li>
+    <li>
+        <strong>No Refunds Under Warranty:</strong>
+        <p>This warranty is for repair or replacement service only. We do not offer full refunds or returns under this warranty, except at our discretion if a defect cannot be fixed or a replacement cannot be provided. In such rare cases, a refund or credit not exceeding the original purchase price of the PC may be offered, at John's Easy Tech's discretion.</p>
+    </li>
+    <li>
+        <strong>Exclusive Remedy:</strong>
+        <p>Repair or replacement of defective parts (or the product, as applicable) as described above is your sole and exclusive remedy under this warranty.</p>
+    </li>
+    <li>
+        <strong>Limitations:</strong>
+        <p>This warranty gives you specific legal rights. You may also have other rights which vary from state to state. For example, some states do not allow exclusion of certain warranties or limitations on how long an implied warranty lasts, so some of the above limitations may not apply to you. However, to the fullest extent permitted by law, we exclude all implied warranties (including the implied warranties of merchantability and fitness for a particular purpose) beyond the duration of the one-year express warranty provided.</p>
+    </li>
+    <li>
+        <strong>Warranty Transfer:</strong>
+        <p>This warranty is only valid for the original purchaser of the PC and is not transferable to any subsequent owner.</p>
+    </li>
+    <li>
+        <strong>Changes to Warranty Terms:</strong>
+        <p>We reserve the right to modify the terms of this warranty for future purchases. However, any changes will not affect the coverage of an existing warranty purchased for a PC.</p>
+    </li>
+</ol>
+
+{# Legal Disclaimers Section #}
+<h2 class="mt-8">Legal Disclaimers</h2>
+<p>The following disclaimers and limitations of liability apply to all products and services provided by John's Easy Tech:</p>
+<ol class="terms-list">
+    <li>
+        <strong>Product Condition ("As Is" Sale):</strong>
+        <p>Except for the express obligations stated in the above Warranty Policy (if purchased) or any other written guarantee provided, all products and services are provided on an <strong>"as is"</strong> and "as available" basis. To the fullest extent permitted by law, John's Easy Tech disclaims all implied warranties or conditions of any kind, including but not limited to implied warranties of merchantability and fitness for a particular purpose. In other words, there are no warranties that extend beyond those expressly stated in these written terms.</p>
+    </li>
+    <li>
+        <strong>Limitation of Liability:</strong>
+        <p>To the maximum extent permitted by law, in no event shall John's Easy Tech or its owner be liable for any indirect, incidental, special, consequential, or punitive damages whatsoever. This includes, without limitation, damages for loss of profits or revenue, loss of data, loss of use of equipment, cost of recovering data, or any other similar damages, arising out of or related to the use of our products or services, even if we have been advised of the possibility of such damages. <strong>Our total cumulative liability for any claim arising from or related to a product or service shall not exceed the amount you paid to John's Easy Tech for that product or service.</strong> This limitation of liability applies to any and all claims, whether based on warranty, contract, tort (including negligence), strict liability, or any other legal theory.</p>
+    </li>
+     <li>
+        <strong>No Liability for Data or Software Issues:</strong>
+        <p>John's Easy Tech is not responsible for any data loss, software corruption, or security breaches that may occur on any device we build or service. We strongly recommend that you back up all important data before shipping your PC for service or allowing us to provide technical support. Any advice or instructions given by us (such as during tech support) are followed at your own risk; we are not liable for any unintended consequences of implementing our advice.</p>
+    </li>
+    <li>
+        <strong>Third-Party Products and Warranties:</strong>
+        <p>The custom PCs we build may include third-party components (such as processors, graphics cards, etc.). These components may carry their own manufacturer warranties. John's Easy Tech's Warranty Policy is separate from any manufacturer warranty. We make no guarantees on behalf of component manufacturers. If a component fails outside of our warranty or you did not purchase our extended warranty, you may need to seek recourse through the manufacturer's warranty (if available).</p>
+    </li>
+    <li>
+        <strong>Tech Support Limitations:</strong>
+        <p>Any technical support services provided are on a best-effort basis as described in the Tech Support Agreement. While we strive to resolve issues, we do not guarantee that every problem will be fixed. We disclaim any liability for unresolved issues or any new issues that may inadvertently arise in the course of providing support, except as required by law.</p>
+    </li>
+    <li>
+        <strong>Not an Authorized Service Center:</strong>
+        <p>John's Easy Tech is an independent small business. We are not an authorized service provider or reseller for any major computer or software companies. Use of our services may potentially void manufacturer warranties for your device if they have such policies (for example, some manufacturers void warranties if a third party opens the device). It is your responsibility to understand your device's warranty conditions.</p>
+    </li>
+    <li>
+        <strong>Independence and No Insurance:</strong>
+        <p>John's Easy Tech does not currently carry business liability insurance. By agreeing to our terms and purchasing our products/services, you acknowledge that you are doing business with an independent small business. You agree that you will not hold John's Easy Tech liable beyond what is allowed by these terms, and you understand that any remedies are limited as stated herein.</p>
+    </li>
+    <li>
+        <strong>Legal Compliance:</strong>
+        <p>You are responsible for using any products and services from John's Easy Tech in compliance with all applicable laws and regulations. We do not condone or support any illegal use of our products (for example, using the computer for unlawful activities), and we shall not be held liable for any misuse by the customer.</p>
+    </li>
+     <li>
+        <strong>No Third-Party Beneficiaries:</strong>
+        <p>These terms do not confer any rights or remedies upon any person other than you and John's Easy Tech.</p>
+    </li>
+    <li>
+        <strong>Limitation on Claims:</strong>
+        <p>Any claim or cause of action you may have arising out of or related to your use of our products or services must be filed within one (1) year after such claim or cause of action arose, or else it is permanently barred. (This limitation may not apply in certain jurisdictions that do not allow shortening of statutory limitation periods.)</p>
+    </li>
+    <li>
+        <strong>Acknowledgment:</strong>
+        <p>By agreeing to these terms, you acknowledge that you have read and understand these disclaimers and agree to be bound by them. You understand that without these provisions, the cost of products and services provided to you would likely be higher, and that these provisions are an essential basis of the bargain between you and John's Easy Tech.</p>
+    </li>
+</ol>
+
+{# Tech Support Agreement Section #}
+<h2 class="mt-8">Tech Support Agreement</h2>
+<p>These terms apply when you engage John's Easy Tech for technical support services (the "Support Services"), whether you purchased a support service separately or it is provided as part of another purchase:</p>
+<ol class="terms-list">
+    <li>
+        <strong>Scope of Services:</strong>
+        <p>John's Easy Tech will provide technical support and troubleshooting services for computer hardware and software issues as requested by you. Support may be provided remotely (via online communication, remote desktop access, phone, or email) or in-person if you are in the local area and an in-person visit is agreed upon. The specific scope of support (such as setting up a new PC, removing a virus, fixing a hardware issue, or general tech advice) will be determined in advance between you and John's Easy Tech.</p>
+    </li>
+    <li>
+        <strong>Scheduling and Access:</strong>
+        <p>For on-site support, appointments will be scheduled at mutually agreeable times. You agree to provide a safe and accessible environment for the technician to work. For remote support, you may need to install certain software or follow instructions to enable remote assistance. You agree to provide necessary passwords, usernames, or other access to your system as needed for troubleshooting (and you represent that you have the legal right to grant access to the device and software in question).</p>
+    </li>
+    <li>
+        <strong>Customer Responsibilities:</strong>
+        <p>You are responsible for backing up all important data on your devices before we perform support services. We will take reasonable care with your system, but we cannot guarantee that data will not be lost or that hardware will not fail during or after support. It is your responsibility to have recent backups. You also agree to have any software product keys, installation media, or login information for your systems readily available if needed for the service.</p>
+    </li>
+    <li>
+        <strong>Fees and Payment:</strong>
+        <p>If the tech support service is offered for a fee (for example, an hourly rate or flat fee per incident), the fees will be communicated to you before work begins. All payments for support services are due upon completion of the service session (or as otherwise invoiced). Payments will generally be handled via our online Stripe payment system, unless another arrangement is made. If the support service is included as part of a promotion or warranty service, you will not be charged for that support as long as it falls within the agreed scope.</p>
+    </li>
+    <li>
+        <strong>No Guarantee of Fix:</strong>
+        <p>While we will use our best efforts to troubleshoot and resolve your issue, John's Easy Tech makes no guarantee that we will be able to fix every problem or that we can do so within a specific timeframe. Some issues may be beyond our expertise or may require you to contact the device manufacturer or software vendor. If we cannot resolve your issue, we will inform you of the next steps or recommendations (but no refund will be provided for time spent, unless we explicitly offered a satisfaction guarantee in writing for that service).</p>
+    </li>
+    <li>
+        <strong>Limitation of Liability (Support):</strong>
+        <p>During the course of providing support, there is a risk (however small) that changes to software or hardware might result in unintended consequences, such as data loss or hardware malfunction. You agree that John's Easy Tech will not be liable for any accidental damage or loss of data that may occur during the provision of support services, except in cases of gross negligence or willful misconduct. If you have sensitive or critical data, it is your responsibility to inform us and to ensure it is backed up. Our liability for any claims arising from support services is limited as stated in the Legal Disclaimers section above (limited to the amount paid for the service, etc.).</p>
+    </li>
+     <li>
+        <strong>Customer Conduct:</strong>
+        <p>You agree to treat our technician with respect and provide a proper environment for work. We reserve the right to refuse or terminate a support session if we encounter any harassment, unsafe conditions, or unethical requests (such as being asked to perform tasks that violate law or licensing agreements).</p>
+    </li>
+    <li>
+        <strong>Remote Support Consent:</strong>
+        <p>If you agree to remote support, you consent to the technician remotely accessing your computer for the duration of the session. You can end the remote session at any time. We will not access your system after the session without a new authorization from you. We also agree not to copy or retain your personal data from your system except as necessary to perform the service (e.g., downloading a diagnostic log), and any such information will be treated confidentially.</p>
+    </li>
+    <li>
+        <strong>Privacy and Confidentiality:</strong>
+        <p>In the course of providing support, we may inadvertently see some of your files or information on your screen. John's Easy Tech will keep any such information confidential and will not use it for any purpose outside of troubleshooting your issue. We will not disclose your personal information to third parties except as needed to perform the service or as required by law.</p>
+    </li>
+    <li>
+        <strong>Third-Party Services/Software:</strong>
+        <p>As part of support, we may recommend or install third-party software tools (for example, antivirus programs or diagnostic utilities) to help resolve your issue. We are not liable for any licensing issues or defects in third-party software. You are responsible for having legitimate licenses for any software we install or work on. We will not install pirated software or engage in any actions that violate intellectual property laws.</p>
+    </li>
+    <li>
+        <strong>Post-Service Feedback and Follow-up:</strong>
+        <p>If you experience recurring or new issues after a support session related to the service we provided, please contact us and we will attempt to address the issue (additional fees may apply if it is a new issue or outside the original scope). We appreciate feedback on our services to improve.</p>
+    </li>
+     <li>
+        <strong>Termination:</strong>
+        <p>You have the right to terminate a support session at any time. If you choose to terminate before the issue is resolved, you will only be charged for the time spent up to that point (if it's a paid service). We also reserve the right to terminate the service if we identify that continuing would be ineffective or if any of these terms are violated.</p>
+    </li>
+    <li>
+        <strong>Applicable Terms:</strong>
+        <p>This Tech Support Agreement is part of the overall Terms and Conditions of John's Easy Tech. All applicable provisions from the Terms and Conditions and Legal Disclaimers (such as limitations of liability, governing law, etc.) apply to support services as well.</p>
+    </li>
+</ol>
+
+{# Signature Section - Included as provided, but consider if needed for online-only #}
+{# Typically, online agreement is via checkbox during checkout/service request #}
+<h2 class="mt-8">Signature and Consent Form</h2>
+<p><strong>Customer Agreement Acknowledgment:</strong></p>
+<p>By signing below (or by electronically signing/agreeing via our website), you acknowledge and agree to all the terms and policies stated above, including the Terms and Conditions, Warranty Policy, Legal Disclaimers, and Tech Support Agreement of John's Easy Tech. You confirm that you are at least 18 years of age or have obtained consent from a parent or legal guardian. You also consent to the collection and use of your personal information as needed to fulfill your orders and services (in accordance with these terms).</p>
+<p class="mt-6">Please sign and date to indicate your acceptance of these terms:</p>
+<div class="signature-area mt-4" style="line-height: 2.5;"> {# Add some spacing #}
+    <p>Customer Name (Print): __________________________</p>
+    <p>Customer Signature: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_____________________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date: _______________</p>
+    <p>Parent/Guardian Name (if customer is under 18): __________________</p>
+    <p>Parent/Guardian Signature: ______________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date: _______________</p>
+</div>
+
+{# Add CSS for terms list if needed #}
+<style>
+    .terms-list > li, .sub-list > li {
+        margin-bottom: var(--spacing-5);
+    }
+    .terms-list strong {
+        display: block;
+        margin-bottom: var(--spacing-1);
+        color: var(--color-white);
+    }
+    .sub-list {
+        list-style-type: disc;
+        margin-top: var(--spacing-3);
+        margin-left: var(--spacing-6); /* Indent sub-list */
+    }
+</style>
+
+{% endblock %}

@@ -974,3 +974,74 @@ dd {
 /* Utility classes */
 .fs-sm { font-size: var(--font-size-sm); }
 .ml-2 { margin-left: var(--spacing-2); }
+
+/* === Form Checkbox Specific Styling === */
+.form-group-checkbox {
+  display: flex;
+  align-items: center; /* Vertically align checkbox and label */
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-4); /* Space above checkbox */
+}
+
+.form-group-checkbox input[type="checkbox"] {
+  width: auto; /* Override default form input width */
+  flex-shrink: 0; /* Prevent checkbox from shrinking */
+  appearance: none; /* Remove default browser styling */
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  width: 1.15em; /* Size of checkbox */
+  height: 1.15em;
+  cursor: pointer;
+  position: relative; /* For positioning checkmark */
+  display: inline-block; /* Align properly */
+  vertical-align: middle; /* Align with text */
+  margin-right: var(--spacing-2);
+}
+
+.form-group-checkbox input[type="checkbox"]:checked {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* Basic checkmark using pseudo-element */
+.form-group-checkbox input[type="checkbox"]:checked::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0.15em;
+  left: 0.35em;
+  width: 0.3em;
+  height: 0.6em;
+  border: solid var(--color-white);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.form-group-checkbox input[type="checkbox"]:focus {
+   outline: none;
+   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); /* Focus ring */
+}
+
+
+.form-group-checkbox label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: 0; /* Remove default label margin */
+  cursor: pointer;
+}
+
+.form-group-checkbox label a {
+  color: var(--color-primary); /* Make link stand out */
+  text-decoration: underline;
+}
+.form-group-checkbox label a:hover,
+.form-group-checkbox label a:focus {
+  color: var(--color-primary-darker);
+}
+
+/* Style for required checkbox validation message (browser default) */
+input[type="checkbox"]:required:invalid + label {
+   /* You could add subtle styling here if needed, but browser usually handles it */
+   /* color: var(--color-danger); */
+}
