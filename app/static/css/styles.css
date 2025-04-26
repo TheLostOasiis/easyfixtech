@@ -1045,3 +1045,35 @@ input[type="checkbox"]:required:invalid + label {
    /* You could add subtle styling here if needed, but browser usually handles it */
    /* color: var(--color-danger); */
 }
+
+.hero-logo {
+  max-width: 150px; /* Adjust size as needed */
+  height: auto;     /* Maintain aspect ratio */
+  display: block;   /* Ensures margin auto works for centering if text-center isn't used */
+  margin-left: auto; /* Centers the block element if text-center not on parent */
+  margin-right: auto;/* Centers the block element if text-center not on parent */
+  /* mb-3 class usually adds margin-bottom: 1rem; if not using Bootstrap, uncomment below */
+  /* margin-bottom: 1rem;  */
+}
+
+/* Optional: Ensure hero section has some padding */
+.hero {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.support-logo {
+  max-width: 150px; /* Adjust size as needed */
+  height: auto;     /* Maintain aspect ratio */
+  display: block;   /* Ensures margin auto works for centering if text-center isn't used */
+  margin-left: auto; /* Centers the block element if text-center not on parent */
+  margin-right: auto;/* Centers the block element if text-center not on parent */
+  /* mb-3 class usually adds margin-bottom: 1rem; if not using Bootstrap, uncomment below */
+  /* margin-bottom: 1rem;  */
+}
+
+/* Optional: Add padding to the section if needed */
+.support-page-content > section {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}

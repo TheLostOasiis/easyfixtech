@@ -2,11 +2,149 @@
 {% block title %}Custom PC Builds - {{ super() }}{% endblock %}
 
 {% block content %}
-<div class="text-center" style="padding: var(--spacing-10) 0;">
+<div class="container py-5"> {# Added container for better layout control #}
+  <div class="text-center mb-5">
     <i class="fas fa-tools fa-3x text-primary mb-4"></i>
-    <h2>Request a Custom Build</h2>
-    <p class="text-muted text-lg mb-8">Want a PC tailored exactly to your needs and budget? <br> Our custom build request feature is coming soon!</p>
-    {# Optional: Add a contact link or preliminary form #}
-    <p>In the meantime, feel free to <a href="{{ url_for('support_ticket') }}">contact our support team</a> with your requirements.</p>
+    <h2>Request a Custom PC Build</h2>
+    <p class="text-muted text-lg">Tell us your requirements, and we'll design a PC tailored exactly to your needs and budget!</p>
+  </div>
+
+  {# Custom Build Request Form #}
+  <form method="POST" class="needs-validation" novalidate> {# Added basic HTML5 validation classes #}
+
+    {# Row for Contact Info #}
+    <div class="row mb-3">
+      <div class="col-md-6 form-group">
+        <label for="custom-name" class="form-label">Your Name</label>
+        <input type="text" class="form-control" id="custom-name" name="name" placeholder="e.g., Alex Smith" value="{{ name | default('') }}" required>
+        <div class="invalid-feedback">Please enter your name.</div>
+      </div>
+      <div class="col-md-6 form-group">
+        <label for="custom-email" class="form-label">Your Email</label>
+        <input type="email" class="form-control" id="custom-email" name="email" placeholder="e.g., alex.smith@example.com" value="{{ email | default('') }}" required>
+        <div class="invalid-feedback">Please enter a valid email address.</div>
+      </div>
+    </div>
+
+    {# Row for Budget and Primary Use #}
+    <div class="row mb-3">
+      <div class="col-md-6 form-group">
+        <label for="custom-budget" class="form-label">Budget Range (USD)</label>
+        <select class="form-select" id="custom-budget" name="budget" required>
+          <option value="" selected disabled>Select your approximate budget...</option>
+          <option value="<800">&lt; $800</option>
+          <option value="800-1200">$800 - $1200</option>
+          <option value="1200-1600">$1200 - $1600</option>
+          <option value="1600-2000">$1600 - $2000</option>
+          <option value="2000-2500">$2000 - $2500</option>
+          <option value="2500+">$2500+</option>
+        </select>
+        <div class="invalid-feedback">Please select a budget range.</div>
+      </div>
+      <div class="col-md-6 form-group">
+        <label for="custom-use" class="form-label">Primary Use Case</label>
+        <select class="form-select" id="custom-use" name="primary_use" required>
+          <option value="" selected disabled>What will you mainly use this PC for?</option>
+          <option value="Gaming">Gaming</option>
+          <option value="Video Editing/Rendering">Video Editing / Rendering</option>
+          <option value="Programming/Development">Programming / Development</option>
+          <option value="Office/General Use">Office / General Use</option>
+          <option value="Streaming">Streaming</option>
+          <option value="CAD/3D Modeling">CAD / 3D Modeling</option>
+          <option value="Other">Other (Please specify below)</option>
+        </select>
+        <div class="invalid-feedback">Please select the primary use case.</div>
+      </div>
+    </div>
+
+    {# Row for Component Preferences #}
+    <div class="row mb-3">
+        <div class="col-md-4 form-group">
+          <label for="custom-cpu" class="form-label">CPU Preference</label>
+          <select class="form-select" id="custom-cpu" name="cpu_pref">
+            <option value="No Preference" selected>No Preference</option>
+            <option value="Intel">Intel Preferred</option>
+            <option value="AMD">AMD Preferred</option>
+          </select>
+        </div>
+        <div class="col-md-4 form-group">
+          <label for="custom-gpu" class="form-label">GPU Preference</label>
+          <select class="form-select" id="custom-gpu" name="gpu_pref">
+            <option value="No Preference" selected>No Preference</option>
+            <option value="Nvidia">Nvidia Preferred</option>
+            <option value="AMD">AMD Preferred</option>
+            <option value="Integrated">Integrated Graphics Only</option>
+          </select>
+        </div>
+         <div class="col-md-4 form-group">
+          <label for="custom-ram" class="form-label">RAM Amount</label>
+          <select class="form-select" id="custom-ram" name="ram_amount">
+            <option value="No Preference" selected>Recommend for me</option>
+            <option value="16GB">16GB</option>
+            <option value="32GB">32GB</option>
+            <option value="64GB">64GB</option>
+             <option value="128GB+">128GB+</option>
+          </select>
+        </div>
+    </div>
+
+    {# Specific Needs / Details #}
+    <div class="form-group mb-3">
+        <label for="custom-details" class="form-label">Specific Requirements & Notes</label>
+        <textarea class="form-control" id="custom-details" name="details" rows="5" placeholder="Mention any specific components (e.g., 'RTX 4080', '2TB NVMe SSD'), software needs (e.g., 'Adobe Creative Cloud'), preferred case style/color, desire for RGB lighting, need for peripherals (monitor, keyboard, mouse), or anything else relevant."></textarea>
+    </div>
+
+    {# Operating System Preference #}
+    <div class="form-group mb-3">
+        <label for="custom-os" class="form-label">Operating System</label>
+        <select class="form-select" id="custom-os" name="os_pref">
+            <option value="Windows 11 Home" selected>Windows 11 Home</option>
+            <option value="Windows 11 Pro">Windows 11 Pro</option>
+            <option value="Linux">Linux (Please specify distro in notes)</option>
+            <option value="No OS">No OS Required</option>
+        </select>
+    </div>
+
+    {# Terms Agreement Checkbox #}
+    <div class="form-group form-check mb-4"> {# Use form-check for Bootstrap styling #}
+        <input type="checkbox" class="form-check-input" id="terms-agree-custom" name="terms_agree" value="yes" required>
+        <label class="form-check-label" for="terms-agree-custom">
+            I have read and agree to the
+            <a href="{{ url_for('terms') }}" target="_blank">Terms and Conditions</a>, including the custom build quote and order process.
+        </label>
+        <div class="invalid-feedback">You must agree to the terms and conditions.</div>
+    </div>
+
+    {# Submit Button #}
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-paper-plane"></i> Submit Custom Build Request</button>
+    </div>
+
+  </form>
 </div>
+
+{# Basic script for Bootstrap validation styles #}
+<script>
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function () {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  var forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+      }, false)
+    })
+})()
+</script>
+
 {% endblock %}

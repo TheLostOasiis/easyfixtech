@@ -2,7 +2,15 @@
 {% block title %}Welcome - {{ super() }}{% endblock %}
 
 {% block content %}
-<section class="hero">
+{# Added text-center to center the hero content #}
+<section class="hero text-center">
+  {# Added the logo image here - Corrected to .png #}
+  <img
+    src="{{ url_for('static', filename='images/JohnsEasyTech_MAIN_LOGO.png') }}"
+    alt="John's Easy Tech Logo"
+    class="hero-logo mb-3" {# Added class for styling and margin-bottom #}
+  >
+
   <h1>Welcome to John's Easy Tech</h1>
   <p>Your source for custom-built computers, professional tech support, and unbeatable service.</p>
   {# Use primary button style for main calls to action #}

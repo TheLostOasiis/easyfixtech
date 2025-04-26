@@ -34,6 +34,7 @@ DATA_DIR = os.getenv("DATA_DIR", "/data") # OnRender typically uses /data for pe
 PREBUILT_FILE = os.path.join(DATA_DIR, "prebuilts.json")
 TICKETS_FILE = os.path.join(DATA_DIR, "tickets.json")
 ORDERS_FILE = os.path.join(DATA_DIR, "orders.json")
+CUSTOM_REQUESTS_FILE = os.path.join(DATA_DIR, "custom_requests.json") # <<< ADDED
 RECEIPT_DIR = os.path.join(DATA_DIR, "receipts")
 SECURITY_STATUS_FILE = os.path.join(DATA_DIR, "security_status.json") # File for security status
 LOG_DIR = os.getenv("LOG_DIR", os.path.join(DATA_DIR, "logs")) # Store logs in persistent storage too
@@ -80,41 +81,41 @@ if not app.config["ADMIN_PASSWORD_HASH"]:
 # --- Initialize Extensions ---
 Session(app)
 if app.config["STRIPE_SECRET_KEY"]:
-    stripe.api_key = app.config["STRIPE_SECRET_KEY"]
+     stripe.api_key = app.config["STRIPE_SECRET_KEY"]
 else:
-    app.logger.error("STRIPE_SECRET_KEY is not set. Stripe integration will fail.")
-    # In production, you might want to prevent startup if keys are missing
+     app.logger.error("STRIPE_SECRET_KEY is not set. Stripe integration will fail.")
+     # In production, you might want to prevent startup if keys are missing
 
 
 # --- Logging Setup ---
 def setup_logging(app_instance):
-    """Set up logging for the application"""
-    # OnRender often captures stdout/stderr, but file logging is good too
-    log_level = logging.DEBUG if app_instance.debug else logging.INFO
-    # Basic console logging configured first
-    logging.basicConfig(level=log_level, format='%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
+     """Set up logging for the application"""
+     # OnRender often captures stdout/stderr, but file logging is good too
+     log_level = logging.DEBUG if app_instance.debug else logging.INFO
+     # Basic console logging configured first
+     logging.basicConfig(level=log_level, format='%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
 
-    # File logging to persistent storage
-    try:
-        os.makedirs(LOG_DIR, exist_ok=True)
-        log_file = os.path.join(LOG_DIR, 'app.log')
-        # Rotate logs: 5 files, 5MB each
-        file_handler = RotatingFileHandler(log_file, maxBytes=5*1024*1024, backupCount=5)
-        formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
-        file_handler.setFormatter(formatter)
-        file_handler.setLevel(logging.INFO) # Log INFO and above to file
-        app_instance.logger.addHandler(file_handler)
-        # Avoid duplicate console logs if Werkzeug/Flask adds its own handler
-        app_instance.logger.propagate = False
-        app_instance.logger.info(f'File logging enabled at {log_file}')
-    except Exception as e:
-        app_instance.logger.error(f"Failed to set up file logging at {LOG_DIR}: {e}", exc_info=True)
+     # File logging to persistent storage
+     try:
+         os.makedirs(LOG_DIR, exist_ok=True)
+         log_file = os.path.join(LOG_DIR, 'app.log')
+         # Rotate logs: 5 files, 5MB each
+         file_handler = RotatingFileHandler(log_file, maxBytes=5*1024*1024, backupCount=5)
+         formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
+         file_handler.setFormatter(formatter)
+         file_handler.setLevel(logging.INFO) # Log INFO and above to file
+         app_instance.logger.addHandler(file_handler)
+         # Avoid duplicate console logs if Werkzeug/Flask adds its own handler
+         app_instance.logger.propagate = False
+         app_instance.logger.info(f'File logging enabled at {log_file}')
+     except Exception as e:
+         app_instance.logger.error(f"Failed to set up file logging at {LOG_DIR}: {e}", exc_info=True)
 
-    app_instance.logger.setLevel(log_level) # Set level for Flask's logger
-    app_instance.logger.info('Application startup')
-    app_instance.logger.info(f'Flask Environment: {app.config["FLASK_ENV"]}, Debug Mode: {app.config["DEBUG"]}')
-    app_instance.logger.info(f'Domain configured: {app.config["YOUR_DOMAIN"]}')
-    app_instance.logger.info(f'Data directory: {DATA_DIR}')
+     app_instance.logger.setLevel(log_level) # Set level for Flask's logger
+     app_instance.logger.info('Application startup')
+     app_instance.logger.info(f'Flask Environment: {app.config["FLASK_ENV"]}, Debug Mode: {app.config["DEBUG"]}')
+     app_instance.logger.info(f'Domain configured: {app.config["YOUR_DOMAIN"]}')
+     app.logger.info(f'Data directory: {DATA_DIR}')
 
 setup_logging(app) # Call logging setup early
 
@@ -122,73 +123,74 @@ setup_logging(app) # Call logging setup early
 # --- Context Processors & Filters ---
 @app.context_processor
 def inject_current_year():
-    """Injects the current year into all templates."""
-    return {'current_year': datetime.datetime.now().year}
+     """Injects the current year into all templates."""
+     return {'current_year': datetime.datetime.now().year}
 
 if BABEL_INSTALLED:
-    @app.template_filter('format_datetime')
-    def _format_datetime(value, format='medium', locale='en_US'):
-        """Formats an ISO datetime string using Babel."""
-        if not value:
-            return ''
-        try:
-            # Attempt to parse ISO format string
-            dt_object = datetime.datetime.fromisoformat(value)
-            return format_datetime(dt_object, format=format, locale=locale)
-        except (ValueError, TypeError) as e:
-            app.logger.warning(f"Could not format datetime '{value}': {e}")
-            return value # Return original string if parsing/formatting fails
+     @app.template_filter('format_datetime')
+     def _format_datetime(value, format='medium', locale='en_US'):
+         """Formats an ISO datetime string using Babel."""
+         if not value:
+             return ''
+         try:
+             # Attempt to parse ISO format string
+             dt_object = datetime.datetime.fromisoformat(value)
+             return format_datetime(dt_object, format=format, locale=locale)
+         except (ValueError, TypeError) as e:
+             app.logger.warning(f"Could not format datetime '{value}': {e}")
+             return value # Return original string if parsing/formatting fails
 else:
-    # Provide a dummy filter if Babel isn't installed
-    @app.template_filter('format_datetime')
-    def _format_datetime(value, format='medium', locale='en_US'):
-        app.logger.warning("Babel not installed, cannot format datetime nicely.")
-        return value # Return original string
+     # Provide a dummy filter if Babel isn't installed
+     @app.template_filter('format_datetime')
+     def _format_datetime(value, format='medium', locale='en_US'):
+         app.logger.warning("Babel not installed, cannot format datetime nicely.")
+         return value # Return original string
 
 
-# --- Data Handling Helpers (Unchanged from previous version) ---
-# ... (load_json_data, save_json_data, load_prebuilts, etc. remain the same) ...
+# --- Data Handling Helpers ---
 def load_json_data(filepath, default_data=[]):
-    """Loads data from a JSON file, creating it if it doesn't exist."""
-    try:
-        if not os.path.exists(filepath):
-            dirpath = os.path.dirname(filepath)
-            if dirpath: # Ensure directory exists only if path includes one
+     """Loads data from a JSON file, creating it if it doesn't exist."""
+     try:
+         if not os.path.exists(filepath):
+             dirpath = os.path.dirname(filepath)
+             if dirpath: # Ensure directory exists only if path includes one
                  os.makedirs(dirpath, exist_ok=True)
-            with open(filepath, 'w') as f:
-                json.dump(default_data, f, indent=4)
-            app.logger.info(f"Created initial data file: {filepath}")
-            return default_data
-        else:
-            with open(filepath, 'r') as f:
-                content = f.read()
-                if not content: return default_data
-                return json.loads(content)
-    except (IOError, json.JSONDecodeError, OSError) as e:
-        app.logger.error(f"Error loading JSON data from {filepath}: {e}", exc_info=True)
-        flash(f"Error accessing data file {os.path.basename(filepath)}. Please contact support.", "danger")
-        return default_data
+             with open(filepath, 'w') as f:
+                 json.dump(default_data, f, indent=4)
+             app.logger.info(f"Created initial data file: {filepath}")
+             return default_data
+         else:
+             with open(filepath, 'r') as f:
+                 content = f.read()
+                 if not content: return default_data # Handle empty file case
+                 return json.loads(content)
+     except (IOError, json.JSONDecodeError, OSError) as e:
+         app.logger.error(f"Error loading JSON data from {filepath}: {e}", exc_info=True)
+         flash(f"Error accessing data file {os.path.basename(filepath)}. Please contact support.", "danger")
+         return default_data # Return default on error
 
 def save_json_data(filepath, data):
-    """Saves data to a JSON file."""
-    try:
-        dirpath = os.path.dirname(filepath)
-        if dirpath:
-            os.makedirs(dirpath, exist_ok=True)
-        with open(filepath, 'w') as f:
-            json.dump(data, f, indent=4)
-        return True
-    except (IOError, OSError) as e:
-        app.logger.error(f"Error saving JSON data to {filepath}: {e}", exc_info=True)
-        flash(f"Error saving data file {os.path.basename(filepath)}. Please try again.", "danger")
-        return False
+     """Saves data to a JSON file."""
+     try:
+         dirpath = os.path.dirname(filepath)
+         if dirpath:
+             os.makedirs(dirpath, exist_ok=True)
+         with open(filepath, 'w') as f:
+             json.dump(data, f, indent=4)
+         return True
+     except (IOError, OSError) as e:
+         app.logger.error(f"Error saving JSON data to {filepath}: {e}", exc_info=True)
+         flash(f"Error saving data file {os.path.basename(filepath)}. Please try again.", "danger")
+         return False
 
+# Specific Loaders/Savers
 def load_prebuilts():
     prebuilts = load_json_data(PREBUILT_FILE, default_data=[])
+    # Ensure essential keys exist with defaults
     for pc in prebuilts:
         pc.setdefault('image', DEFAULT_IMAGE)
         pc.setdefault('category', 'General Use')
-        pc.setdefault('id', str(uuid.uuid4()))
+        pc.setdefault('id', str(uuid.uuid4())) # Add ID if missing
     return prebuilts
 
 def save_prebuilts(prebuilts_list): return save_json_data(PREBUILT_FILE, prebuilts_list)
@@ -197,9 +199,12 @@ def save_tickets(tickets_list): return save_json_data(TICKETS_FILE, tickets_list
 def load_orders(): return load_json_data(ORDERS_FILE, [])
 def save_orders(orders_list): return save_json_data(ORDERS_FILE, orders_list)
 
+# <<< ADDED: Custom Request Load/Save Helpers >>>
+def load_custom_requests(): return load_json_data(CUSTOM_REQUESTS_FILE, [])
+def save_custom_requests(requests_list): return save_json_data(CUSTOM_REQUESTS_FILE, requests_list)
 
-# --- Initialization Logic (Unchanged) ---
-# ... (initialize_data_files remains the same) ...
+
+# --- Initialization Logic ---
 def initialize_data_files():
     app.logger.info("Initializing data directories and files...")
     try:
@@ -217,17 +222,19 @@ def initialize_data_files():
             ]
             save_prebuilts(default_prebuilts)
 
+        # Ensure other files exist by calling their loaders
         load_tickets()
         load_orders()
+        load_custom_requests() # <<< UPDATED: Ensure custom requests file exists
         app.logger.info("Data file initialization check complete.")
 
     except Exception as e:
         app.logger.error(f"Failed during data file initialization: {e}", exc_info=True)
 
-initialize_data_files()
+initialize_data_files() # Call initialization after helpers are defined
 
-# --- Decorators (Unchanged) ---
-# ... (admin_required remains the same) ...
+
+# --- Decorators ---
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -237,15 +244,19 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# --- Email Helper (Unchanged) ---
-# ... (send_email remains the same, still basic text implementation) ...
+# --- Email Helper ---
 def send_email(to_address, subject, body, attachment_path=None, attachment_filename=None):
+    # Note: This uses basic smtplib with Gmail. For production, consider Flask-Mail
+    # Also, attachment logic is not implemented here.
     sender = app.config.get("EMAIL_ADDRESS")
     password = app.config.get("EMAIL_PASSWORD") # Assumes Google App Password
     if not sender or not password:
         app.logger.error("Email address or password not configured. Cannot send email.")
         return False
+
+    # Basic email structure (plain text)
     message = f"Subject: {subject}\nFrom: {sender}\nTo: {to_address}\n\n{body}"
+
     try:
         # Using Gmail SMTP with SSL
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
@@ -264,192 +275,416 @@ def send_email(to_address, subject, body, attachment_path=None, attachment_filen
 
 # --- Routes ---
 
-# --- Public Routes (Unchanged) ---
+# --- Public Routes ---
 @app.route('/')
-def index(): return render_template('home.html')
+def index():
+    return render_template('home.html')
 
 @app.route('/terms')
-def terms(): return render_template('terms.html') # Ensure terms.html exists
+def terms():
+    # Ensure templates/terms.html exists or create it
+    return render_template('terms.html')
 
 @app.route('/prebuilts')
 def prebuilts():
     pcs = load_prebuilts()
+    # Create categories dynamically and sort them
     categories = sorted(list(set(pc.get('category', 'General Use') for pc in pcs)))
+    # Group PCs by category
     categorized_pcs = {cat: [pc for pc in pcs if pc.get('category', 'General Use') == cat] for cat in categories}
     return render_template("prebuilts.html", categorized_pcs=categorized_pcs, categories=categories)
 
-@app.route('/custom')
-def custom(): return render_template('custom.html')
+# --- UPDATED: /custom route handles GET and POST ---
+@app.route('/custom', methods=['GET', 'POST'])
+def custom_build_request():
+    if request.method == 'POST':
+        # --- 1. Receive Form Data ---
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
+        budget = request.form.get('budget') # Keep as selected value
+        primary_use = request.form.get('primary_use')
+        cpu_pref = request.form.get('cpu_pref', 'No Preference')
+        gpu_pref = request.form.get('gpu_pref', 'No Preference')
+        ram_amount = request.form.get('ram_amount', 'No Preference')
+        details = request.form.get('details', '').strip()
+        os_pref = request.form.get('os_pref', 'Windows 11 Home')
+        terms_agree = request.form.get('terms_agree') # Value is 'yes' if checked
 
+        # --- 2. Server-Side Validation (Essential!) ---
+        errors = []
+        if not name:
+            errors.append("Name is required.")
+        if not email: # Consider adding better email format validation
+            errors.append("Email is required.")
+        if not budget:
+            errors.append("Budget range is required.")
+        if not primary_use:
+            errors.append("Primary use case is required.")
+        if not terms_agree:
+            errors.append("You must agree to the terms and conditions.")
+        # Add more specific validation if needed (e.g., budget format)
 
-# --- Support Route (Unchanged) ---
+        if errors:
+            for error in errors:
+                flash(error, 'warning') # Use flash to show errors
+            # Re-render form, passing back submitted data to repopulate fields
+            app.logger.warning(f"Custom build form validation failed: {errors}")
+            return render_template('custom.html',
+                                   name=name, email=email, budget=budget,
+                                   primary_use=primary_use, cpu_pref=cpu_pref,
+                                   gpu_pref=gpu_pref, ram_amount=ram_amount,
+                                   details=details, os_pref=os_pref)
+
+        # --- 3. Process the Valid Request ---
+        timestamp = datetime.datetime.now().isoformat() # Use ISO format for consistency
+        request_id = str(uuid.uuid4())
+        custom_request_data = {
+            "id": request_id,
+            "timestamp": timestamp,
+            "status": "new", # Add a status field
+            "name": name,
+            "email": email,
+            "budget": budget,
+            "primary_use": primary_use,
+            "cpu_pref": cpu_pref,
+            "gpu_pref": gpu_pref,
+            "ram_amount": ram_amount,
+            "os_pref": os_pref,
+            "details": details
+        }
+
+        # Attempt to save to JSON file
+        requests_list = load_custom_requests()
+        requests_list.append(custom_request_data)
+
+        if save_custom_requests(requests_list):
+            app.logger.info(f"Saved new custom build request ID: {request_id} from {name}")
+
+            # Attempt to send email notification
+            admin_email = app.config.get('EMAIL_ADDRESS')
+            if admin_email:
+                subject = f"New Custom Build Request - {name} ({request_id[:8]})"
+                body = f"""
+New Custom Build Request Received:
+
+Request ID: {request_id}
+Time: {timestamp}
+Name: {name}
+Email: {email}
+Budget: {budget}
+Primary Use: {primary_use}
+CPU Preference: {cpu_pref}
+GPU Preference: {gpu_pref}
+RAM Amount: {ram_amount}
+OS Preference: {os_pref}
+
+Details / Notes:
+-----------------
+{details}
+-----------------
+"""
+                send_email(admin_email, subject, body) # Use your existing email function
+            else:
+                app.logger.warning("Admin email not configured, skipping notification for custom request.")
+
+            flash('Your custom build request has been submitted successfully! We will contact you shortly.', 'success')
+            return redirect(url_for('custom_build_request_thanks')) # Redirect to a new 'thank you' page
+        else:
+            # save_custom_requests already flashed an error
+            app.logger.error(f"Failed to save custom build request ID: {request_id}")
+            # Re-render form if saving failed
+            return render_template('custom.html',
+                                   name=name, email=email, budget=budget,
+                                   primary_use=primary_use, cpu_pref=cpu_pref,
+                                   gpu_pref=gpu_pref, ram_amount=ram_amount,
+                                   details=details, os_pref=os_pref)
+
+    # --- Handle GET Request ---
+    # Just show the blank form
+    return render_template('custom.html')
+
+# --- ADDED: Route for custom build thank you page ---
+@app.route('/custom/thanks')
+def custom_build_request_thanks():
+     # Consider creating templates/custom_thanks.html for better styling
+     return """
+     <!DOCTYPE html>
+     <html>
+     <head><title>Request Received</title></head>
+     <body>
+         <h1>Thank You!</h1>
+         <p>Your custom build request has been received. We'll review your requirements and get back to you soon via email.</p>
+         <p><a href="/">Return Home</a></p>
+     </body>
+     </html>
+     """
+
+# --- Support Route ---
 @app.route('/support', methods=['GET', 'POST'])
 def support_ticket():
-    # ... (route logic remains the same) ...
     if request.method == 'POST':
         name = request.form.get('name', '').strip()
         email = request.form.get('email', '').strip()
         issue = request.form.get('issue', '').strip()
         errors = []
         if not name: errors.append("Name is required.")
-        if not email: errors.append("Email is required.")
+        if not email: errors.append("Email is required.") # Add better validation if needed
         if not issue: errors.append("Issue description is required.")
         if errors:
             for error in errors: flash(error, "warning")
             return render_template("support.html", name=name, email=email, issue=issue)
 
-        timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        # Use ISO format for timestamp
+        timestamp = datetime.datetime.now().isoformat()
         ticket_id = str(uuid.uuid4())
-        ticket = { "id": ticket_id, "name": name, "email": email, "issue": issue, "timestamp": timestamp, "status": "open" }
+        ticket = {
+            "id": ticket_id,
+            "name": name,
+            "email": email,
+            "issue": issue,
+            "timestamp": timestamp, # Use ISO format
+            "status": "open"
+        }
         tickets = load_tickets()
         tickets.append(ticket)
         if save_tickets(tickets):
             app.logger.info(f"New support ticket: ID {ticket_id} by {name}")
             subject = f"New Support Ticket #{ticket_id[:8]} from {name}"
-            body = f"New ticket submitted:\n\nName: {name}\nEmail: {email}\nIssue:\n{issue}\n\nTime: {timestamp}"
-            send_email(app.config["EMAIL_ADDRESS"], subject, body)
+            # Format body, maybe use formatted timestamp
+            try:
+                formatted_time = format_datetime(datetime.datetime.fromisoformat(timestamp)) if BABEL_INSTALLED else timestamp
+            except:
+                formatted_time = timestamp # Fallback
+            body = f"New ticket submitted:\n\nName: {name}\nEmail: {email}\nIssue:\n{issue}\n\nTime: {formatted_time}"
+            admin_email = app.config.get('EMAIL_ADDRESS')
+            if admin_email: send_email(admin_email, subject, body)
             flash(f"Support ticket submitted successfully. Your ticket ID is {ticket_id}.", "success")
             return redirect(url_for('support_ticket'))
         else:
-            return render_template("support.html", name=name, email=email, issue=issue)
+            # Error flashed by save_tickets
+            return render_template("support.html", name=name, email=email, issue=issue) # Re-render form
+    # GET request
     return render_template("support.html")
 
 
-# --- Checkout Routes (Unchanged) ---
+# --- Checkout Routes ---
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
-    # ... (route logic remains the same) ...
     item_name = request.form.get('item')
     amount_str = request.form.get('amount')
-    customer_email = request.form.get('email')
-    if not item_name or not amount_str:
-        flash("Missing item/amount.", "danger"); return redirect(request.referrer or url_for('prebuilts'))
+    customer_email = request.form.get('email') # Get email from hidden input
+    item_id = request.form.get('item_id') # Get item ID
+
+    if not item_name or not amount_str or not item_id:
+        flash("Missing item details.", "danger")
+        return redirect(request.referrer or url_for('prebuilts'))
     try:
         amount = float(amount_str)
         if amount <= 0: raise ValueError("Amount must be positive.")
         amount_cents = int(round(amount * 100))
     except ValueError:
-        flash("Invalid amount.", "danger"); return redirect(request.referrer or url_for('prebuilts'))
+        flash("Invalid amount specified.", "danger")
+        return redirect(request.referrer or url_for('prebuilts'))
+
     if not customer_email: # Basic email check
-        flash("Email is required.", "danger"); return redirect(request.referrer or url_for('prebuilts'))
+        flash("Email is required for purchase.", "danger")
+        # Consider adding a way for user to input email if not provided
+        return redirect(request.referrer or url_for('prebuilts'))
 
     order_id = str(uuid.uuid4())
-    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    session['pending_order_details'] = { "item": item_name, "amount": amount, "order_id": order_id, "email": customer_email, "timestamp": timestamp }
-    app.logger.info(f"Creating Stripe session for pending Order ID: {order_id}")
+    timestamp = datetime.datetime.now().isoformat() # Use ISO format
+
+    # Store details in session to retrieve after payment
+    session['pending_order_details'] = {
+        "item_id": item_id, # Store item ID too
+        "item_name": item_name,
+        "amount": amount,
+        "order_id": order_id,
+        "email": customer_email,
+        "timestamp": timestamp
+    }
+    app.logger.info(f"Creating Stripe session for pending Order ID: {order_id}, Item: {item_name}, Email: {customer_email}")
+
     try:
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
-            line_items=[{'price_data': {'currency': 'usd', 'product_data': {'name': item_name,}, 'unit_amount': amount_cents,}, 'quantity': 1,}],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': item_name,
+                        # Optionally add description, images here if desired
+                        # 'description': f"Prebuilt PC: {item_name}",
+                        # 'images': [url_for('static', filename=f'images/{item_id}.jpg', _external=True)] # Example image URL
+                    },
+                    'unit_amount': amount_cents,
+                },
+                'quantity': 1,
+            }],
             mode='payment',
+            # Include session_id in success URL for verification
             success_url=url_for('thank_you', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url=url_for('prebuilts', _external=True),
-            customer_email=customer_email,
-            metadata={'order_id': order_id, 'customer_email': customer_email}
+            cancel_url=url_for('prebuilts', _external=True), # Redirect back to products on cancel
+            customer_email=customer_email, # Pre-fill email
+            # Store order details in metadata for webhook processing (recommended) or thank you page verification
+            metadata={
+                'order_id': order_id,
+                'customer_email': customer_email,
+                'item_id': item_id,
+                'item_name': item_name
+            }
         )
         return redirect(checkout_session.url, code=303)
     except stripe.error.StripeError as e:
         err_msg = e.user_message or str(e)
-        app.logger.error(f"Stripe API error for {order_id}: {err_msg}", exc_info=True)
-        flash(f"Payment error: {err_msg}. Please try again.", "danger")
-        session.pop('pending_order_details', None)
+        app.logger.error(f"Stripe API error creating session for Order ID {order_id}: {err_msg}", exc_info=True)
+        flash(f"Payment processing error: {err_msg}. Please try again or contact support.", "danger")
+        session.pop('pending_order_details', None) # Clear pending order
         return redirect(request.referrer or url_for('prebuilts'))
     except Exception as e:
-        app.logger.error(f"Checkout session error for {order_id}: {e}", exc_info=True)
-        flash("Checkout error. Please try again.", "danger")
-        session.pop('pending_order_details', None)
+        app.logger.error(f"Unexpected error creating checkout session for Order ID {order_id}: {e}", exc_info=True)
+        flash("Could not initiate checkout. Please try again.", "danger")
+        session.pop('pending_order_details', None) # Clear pending order
         return redirect(request.referrer or url_for('prebuilts'))
+
 
 @app.route('/thankyou')
 def thank_you():
-    # ... (route logic remains the same - including retrieving session, saving order, generating PDF, sending email) ...
     stripe_session_id = request.args.get('session_id')
     if not stripe_session_id:
-        flash("Invalid access.", "warning"); return redirect(url_for('index'))
-    app.logger.info(f"Thank you page accessed: {stripe_session_id}")
+        flash("Invalid request. No session ID provided.", "warning")
+        return redirect(url_for('index'))
+
+    app.logger.info(f"Thank you page accessed for Stripe session: {stripe_session_id}")
+
     try:
         checkout_session = stripe.checkout.Session.retrieve(stripe_session_id)
         payment_status = checkout_session.payment_status
+        # Get order details reliably from Stripe metadata
         order_id_from_stripe = checkout_session.metadata.get('order_id')
-        app.logger.info(f"Stripe session {stripe_session_id} status: {payment_status}, Order ID: {order_id_from_stripe}")
+        customer_email_from_stripe = checkout_session.metadata.get('customer_email') or checkout_session.customer_details.email
+        item_name_from_stripe = checkout_session.metadata.get('item_name', "Unknown Item")
+        item_id_from_stripe = checkout_session.metadata.get('item_id')
+        amount_paid = checkout_session.amount_total / 100.0 # Amount in dollars
+        timestamp_from_stripe = datetime.datetime.fromtimestamp(checkout_session.created).isoformat()
+
+        app.logger.info(f"Stripe session {stripe_session_id} status: {payment_status}, Order ID: {order_id_from_stripe}, Email: {customer_email_from_stripe}")
+
         if payment_status != "paid":
-             flash("Payment not successful.", "warning"); return redirect(url_for('index'))
+            flash("Payment was not successful or is still processing.", "warning")
+            return redirect(url_for('index'))
 
-        order_data = session.pop('pending_order_details', None)
-        if not order_data or order_data.get('order_id') != order_id_from_stripe:
-            app.logger.warning(f"Session data mismatch/missing for {stripe_session_id}. Reconstructing.")
-            order_data = {
-                "item": checkout_session.line_items.data[0].description if checkout_session.line_items else "Item",
-                "amount": checkout_session.amount_total / 100.0,
-                "order_id": order_id_from_stripe or f"stripe_{stripe_session_id}",
-                "email": checkout_session.customer_details.email,
-                "timestamp": datetime.datetime.fromtimestamp(checkout_session.created).strftime('%Y-%m-%d %H:%M:%S'),
-                "stripe_session_id": stripe_session_id
-            }
-        else:
-             order_data['stripe_session_id'] = stripe_session_id
+        # Use data retrieved directly from Stripe for reliability
+        order_data = {
+            "item_id": item_id_from_stripe,
+            "item_name": item_name_from_stripe,
+            "amount": amount_paid,
+            "order_id": order_id_from_stripe or f"stripe_{stripe_session_id}", # Fallback ID
+            "email": customer_email_from_stripe,
+            "timestamp": timestamp_from_stripe,
+            "stripe_session_id": stripe_session_id,
+            "payment_status": payment_status # Record status
+        }
 
+        # Check if order already saved (e.g., via webhook or previous visit)
         orders = load_orders()
         if not any(o.get('stripe_session_id') == stripe_session_id for o in orders):
             orders.append(order_data)
-            if save_orders(orders): app.logger.info(f"Saved Order ID: {order_data['order_id']}")
-            else: app.logger.error(f"CRITICAL: Failed to save confirmed Order ID: {order_data['order_id']}")
-        else: app.logger.warning(f"Order {order_data['order_id']} already saved. Skipping duplicate.")
+            if save_orders(orders):
+                app.logger.info(f"Saved confirmed Order ID: {order_data['order_id']}")
+                # Clear pending session data only AFTER successfully saving
+                session.pop('pending_order_details', None)
+            else:
+                app.logger.error(f"CRITICAL: Failed to save confirmed Order ID: {order_data['order_id']} from Stripe session {stripe_session_id}")
+                # Don't clear session data if save failed, maybe flash warning
+                flash("Payment successful, but failed to record order internally. Please contact support.", "danger")
+        else:
+            app.logger.warning(f"Order {order_data['order_id']} (Stripe: {stripe_session_id}) was already saved. Displaying thank you page again.")
+            session.pop('pending_order_details', None) # Clear session data even if duplicate
 
+        # --- Generate PDF Receipt ---
         pdf_filename = f"receipt_{order_data['order_id']}.pdf"
         pdf_filepath = os.path.join(RECEIPT_DIR, pdf_filename)
         try:
             pdf = FPDF()
-            pdf.add_page(); pdf.set_font("Arial", 'B', 16); pdf.cell(0, 10, txt="John's Easy Tech - Purchase Receipt", ln=True, align='C')
-            pdf.ln(10); pdf.set_font("Arial", size=12)
-            pdf.cell(40, 10, txt="Order #:"); pdf.cell(0, 10, txt=order_data['order_id'], ln=True)
-            pdf.cell(40, 10, txt="Item:"); pdf.cell(0, 10, txt=order_data['item'], ln=True)
-            pdf.cell(40, 10, txt="Amount Paid:"); pdf.cell(0, 10, txt=f"${order_data['amount']:.2f} USD", ln=True)
-            pdf.cell(40, 10, txt="Date:"); pdf.cell(0, 10, txt=order_data['timestamp'], ln=True)
-            pdf.cell(40, 10, txt="Paid By:"); pdf.cell(0, 10, txt=order_data['email'], ln=True)
-            pdf.ln(10); pdf.set_font("Arial", 'I', 10); terms_url = url_for('terms', _external=True)
-            pdf.multi_cell(0, 5, txt=f"Thank you! By completing this order, you agreed to Terms and Conditions at: {terms_url}")
+            pdf.add_page()
+            pdf.set_font("Arial", 'B', 16)
+            pdf.cell(0, 10, txt="John's Easy Tech - Purchase Receipt", ln=True, align='C')
+            pdf.ln(10)
+            pdf.set_font("Arial", size=12)
+            pdf.cell(40, 10, txt="Order ID:")
+            pdf.cell(0, 10, txt=order_data['order_id'], ln=True)
+            pdf.cell(40, 10, txt="Item:")
+            pdf.cell(0, 10, txt=order_data['item_name'], ln=True) # Use item_name
+            pdf.cell(40, 10, txt="Amount Paid:")
+            pdf.cell(0, 10, txt=f"${order_data['amount']:.2f} USD", ln=True)
+            pdf.cell(40, 10, txt="Date:")
+             # Format date nicely if possible
+            try:
+                formatted_time = format_datetime(datetime.datetime.fromisoformat(order_data['timestamp'])) if BABEL_INSTALLED else order_data['timestamp']
+            except: formatted_time = order_data['timestamp']
+            pdf.cell(0, 10, txt=formatted_time, ln=True)
+            pdf.cell(40, 10, txt="Paid By:")
+            pdf.cell(0, 10, txt=order_data['email'], ln=True)
+            pdf.ln(10)
+            pdf.set_font("Arial", 'I', 10)
+            terms_url = url_for('terms', _external=True)
+            pdf.multi_cell(0, 5, txt=f"Thank you for your purchase! By completing this order, you agreed to the Terms and Conditions available at: {terms_url}")
             pdf.output(pdf_filepath, "F")
             app.logger.info(f"Generated PDF receipt: {pdf_filepath}")
+            # Store path in session for download button
             session['last_receipt_path'] = pdf_filepath
             session['last_receipt_filename'] = pdf_filename
         except Exception as pdf_err:
-             app.logger.error(f"Failed PDF generation for {order_data['order_id']}: {pdf_err}", exc_info=True)
-             session.pop('last_receipt_path', None); session.pop('last_receipt_filename', None)
-             flash("Payment successful, but receipt generation failed. Contact support.", "warning")
+            app.logger.error(f"Failed PDF receipt generation for Order ID {order_data['order_id']}: {pdf_err}", exc_info=True)
+            session.pop('last_receipt_path', None)
+            session.pop('last_receipt_filename', None)
+            flash("Payment successful, but there was an error generating your receipt. Please contact support if needed.", "warning")
 
-        email_subject = f"Your Order Receipt - #{order_data['order_id']}"
-        email_body = f"Thank you!\n\nOrder #: {order_data['order_id']}\nItem: {order_data['item']}\nAmount: ${order_data['amount']:.2f}\nDate: {order_data['timestamp']}\n\nTerms: {url_for('terms', _external=True)}"
-        send_email(order_data['email'], email_subject, email_body) # Still sending text only
+        # --- Send Email Confirmation (Optional Attachment) ---
+        email_subject = f"Your John's Easy Tech Order Receipt - #{order_data['order_id'][:8]}"
+        email_body = f"Thank you for your order!\n\nOrder ID: {order_data['order_id']}\nItem: {order_data['item_name']}\nAmount Paid: ${order_data['amount']:.2f}\nDate: {formatted_time}\n\nYou can view our terms at: {url_for('terms', _external=True)}\n\nIf you need support, please visit: {url_for('support_ticket', _external=True)}"
 
+        # Decide whether to attach PDF - might require Flask-Mail or more complex smtplib setup
+        # For now, sending plain text:
+        send_email(order_data['email'], email_subject, email_body)
+        # If using Flask-Mail, you could attach like this:
+        # with app.open_resource(pdf_filepath) as fp:
+        #     msg.attach(pdf_filename, "application/pdf", fp.read())
+        # mail.send(msg)
+
+        # Render thank you page, passing order data
         return render_template('thankyou.html', order=order_data)
+
     except stripe.error.StripeError as e:
         err_msg = e.user_message or str(e)
-        app.logger.error(f"Stripe verification error for {stripe_session_id}: {err_msg}", exc_info=True)
-        flash(f"Payment verification error: {err_msg}. Contact support.", "danger")
-        session.pop('pending_order_details', None)
+        app.logger.error(f"Stripe verification error for session {stripe_session_id}: {err_msg}", exc_info=True)
+        flash(f"Could not verify payment: {err_msg}. If payment was taken, please contact support.", "danger")
         return redirect(url_for('index'))
     except Exception as e:
-        app.logger.error(f"Thank you page error for {stripe_session_id}: {e}", exc_info=True)
-        session.pop('pending_order_details', None)
-        flash("Unexpected error after payment. Contact support.", "danger")
+        app.logger.error(f"Unexpected error on thank you page for session {stripe_session_id}: {e}", exc_info=True)
+        flash("An unexpected error occurred after payment processing. Please contact support.", "danger")
         return redirect(url_for('index'))
+
 
 @app.route('/download-receipt')
 def download_receipt():
-    # ... (route logic remains the same) ...
     pdf_filepath = session.get('last_receipt_path')
-    pdf_filename = session.get('last_receipt_filename', 'receipt.pdf')
+    pdf_filename = session.get('last_receipt_filename', 'receipt.pdf') # Default filename
+
     if pdf_filepath and os.path.exists(pdf_filepath):
         try:
-            app.logger.info(f"Serving receipt download: {pdf_filepath}")
+            app.logger.info(f"Serving receipt download: {pdf_filepath} as {pdf_filename}")
             return send_file(pdf_filepath, as_attachment=True, download_name=pdf_filename)
         except Exception as e:
             app.logger.error(f"Error sending receipt file {pdf_filepath}: {e}", exc_info=True)
-            flash("Could not download receipt.", "danger"); return redirect(request.referrer or url_for('index'))
+            flash("Could not download the receipt file.", "danger")
+            return redirect(request.referrer or url_for('index')) # Redirect back
     else:
-        app.logger.warning(f"Receipt download failed: Path='{pdf_filepath}'")
-        flash("Receipt not found or session expired.", "warning"); return redirect(url_for('index'))
+        app.logger.warning(f"Receipt download failed: Path='{pdf_filepath}' File Exists: {os.path.exists(pdf_filepath) if pdf_filepath else 'N/A'}")
+        flash("Receipt not found or your session may have expired.", "warning")
+        return redirect(url_for('index'))
+
 
 # --- Admin Routes ---
 
@@ -467,8 +702,8 @@ def admin_login():
         # --- Secure Password Verification ---
         login_valid = False
         if not stored_hash:
-             app.logger.error("ADMIN_PASSWORD (hash) is not configured in environment variables!")
-             flash("Server configuration error. Login disabled.", "danger")
+            app.logger.error("ADMIN_PASSWORD (hash) is not configured in environment variables!")
+            flash("Server configuration error. Login disabled.", "danger")
         elif username == app.config.get("ADMIN_USERNAME") and password_from_form:
             try:
                 # Compare the hash from .env with the password provided in the form
@@ -481,8 +716,8 @@ def admin_login():
                 app.logger.error(f"Error during password hash check: {e}", exc_info=True)
                 flash("An error occurred during login. Please try again.", "danger")
         else:
-             # Case where username is wrong or password field was empty
-             app.logger.warning(f"Admin login attempt failed (Invalid username/empty password) for username: {username}")
+            # Case where username is wrong or password field was empty
+            app.logger.warning(f"Admin login attempt failed (Invalid username/empty password) for username: {username}")
 
         # --- Handle Login Result ---
         if login_valid:
@@ -493,8 +728,8 @@ def admin_login():
             next_url = request.args.get('next')
             # Basic open redirect protection
             if next_url and not next_url.startswith(('/', url_for('index'))):
-                 app.logger.warning(f"Invalid 'next' URL during login: {next_url}")
-                 next_url = None # Ignore invalid next URL
+                app.logger.warning(f"Invalid 'next' URL during login: {next_url}")
+                next_url = None # Ignore invalid next URL
             return redirect(next_url or url_for('admin_dashboard'))
         else:
             # Avoid specific error messages like "wrong password"
@@ -504,6 +739,7 @@ def admin_login():
     # GET request or failed/invalid POST
     return render_template('admin/login.html')
 
+# --- Route to display the edit form ---
 @app.route('/admin/edit_product/<product_id>', methods=['GET'])
 @admin_required
 def admin_edit_product_form(product_id):
@@ -515,12 +751,12 @@ def admin_edit_product_form(product_id):
         flash("Product not found.", "danger")
         return redirect(url_for('admin_view_products'))
 
-    # Get categories for the dropdown
+    # Get categories for the dropdown suggestions
     categories = sorted(list(set(pc.get('category', 'General Use') for pc in prebuilts)))
 
     return render_template('admin/edit_product.html', product=product_to_edit, categories=categories)
 
-
+# --- Route to handle the update submission ---
 @app.route('/admin/edit_product/<product_id>', methods=['POST'])
 @admin_required
 def admin_update_product(product_id):
@@ -533,51 +769,52 @@ def admin_update_product(product_id):
         flash("Product not found.", "danger")
         return redirect(url_for('admin_view_products'))
 
-    # TODO: Add Flask-WTF validation here for better handling
     try:
-        # Get current product data
+        # Get current product data to use as defaults if form fields are missing
         product_data = prebuilts[product_index]
 
-        # Get updated data from form
+        # Get updated data from form, falling back to original data if needed
         name = request.form.get('name', product_data.get('name', '')).strip()
         description = request.form.get('description', product_data.get('description', '')).strip()
         price_str = request.form.get('price', str(product_data.get('price', '0'))).strip()
         image = request.form.get('image', product_data.get('image', '')).strip()
         category = request.form.get('category', product_data.get('category', 'General Use')).strip()
 
-        # Basic Manual Validation (replace/enhance with WTForms)
+        # --- Basic Manual Validation (Replace/Enhance with WTForms) ---
         errors = []
         if not name: errors.append("Product name is required.")
         if not description: errors.append("Product description is required.")
         if not category: errors.append("Product category is required.")
+
         price = product_data.get('price', 0.0) # Default to old price if conversion fails
         try:
-             updated_price = float(price_str)
-             if updated_price < 0:
-                 errors.append("Price cannot be negative.")
-             else:
-                 price = updated_price # Only update if valid
+            updated_price = float(price_str)
+            if updated_price < 0:
+                errors.append("Price cannot be negative.")
+            else:
+                price = updated_price # Only update if valid and non-negative
         except ValueError:
-             errors.append("Invalid price format. Please enter a number.")
+            errors.append("Invalid price format. Please enter a number.")
 
         if errors:
             for error in errors:
                 flash(error, "warning")
-            # Re-render the edit form with current (potentially invalid) data
-            # Need to reconstruct the 'product' dict with submitted values to refill form
-            failed_product_data = product_data.copy() # Start with original
+            # Re-render the edit form with current (potentially invalid) submitted data
+            # Construct dict with submitted values to refill form correctly
+            failed_product_data = product_data.copy() # Start with original data
             failed_product_data.update({ # Overwrite with submitted values
-                 'name': name, 'description': description, 'price': price_str, # Keep price as string for form
+                 'name': name, 'description': description,
+                 'price': price_str, # Keep price as string for form repopulation
                  'image': image, 'category': category
             })
             categories = sorted(list(set(pc.get('category', 'General Use') for pc in prebuilts)))
             return render_template('admin/edit_product.html', product=failed_product_data, categories=categories)
-
+        # --- End Validation ---
 
         # Update product details in the list
         prebuilts[product_index]['name'] = name
         prebuilts[product_index]['description'] = description
-        prebuilts[product_index]['price'] = price
+        prebuilts[product_index]['price'] = price # Store the validated float price
         prebuilts[product_index]['image'] = image or DEFAULT_IMAGE # Use default if image cleared
         prebuilts[product_index]['category'] = category
 
@@ -585,9 +822,7 @@ def admin_update_product(product_id):
         if save_prebuilts(prebuilts):
             flash(f"Product '{name}' updated successfully.", "success")
             app.logger.info(f"Admin updated product ID: {product_id} (Name: {name})")
-        else:
-            # Error message flashed by save_prebuilts
-            pass # Redirect anyway
+        # else: error message flashed by save_prebuilts
 
         return redirect(url_for('admin_view_products'))
 
@@ -597,44 +832,46 @@ def admin_update_product(product_id):
         return redirect(url_for('admin_view_products'))
 
 
-
 @app.route('/admin/logout')
 @admin_required
 def admin_logout():
-    # ... (route logic remains the same) ...
-    username = app.config.get("ADMIN_USERNAME", "admin")
+    username = session.get('admin_username', app.config.get("ADMIN_USERNAME", "admin")) # Get username if stored
     session.pop('admin_logged_in', None)
-    session.clear() # Clear everything
+    session.clear() # Clear entire session for security
     flash('You have been logged out.', 'success')
     app.logger.info(f"Admin logout: {username}")
     return redirect(url_for('admin_login'))
 
-# --- Admin Dashboard & Content Management (Unchanged logic, uses new templates) ---
+# --- Admin Dashboard & Content Management ---
 @app.route('/admin/dashboard')
 @admin_required
 def admin_dashboard():
-    # ... (logic remains the same, renders updated template) ...
-    products = load_prebuilts()
-    tickets = load_tickets()
-    orders = load_orders()
-    open_ticket_count = sum(1 for t in tickets if t.get('status') == 'open')
-    return render_template("admin/dashboard.html", products=products, tickets=tickets, orders=orders[-10:], open_ticket_count=open_ticket_count)
+    try:
+        products = load_prebuilts()
+        tickets = load_tickets()
+        orders = load_orders()
+        # Calculate open tickets count safely
+        open_ticket_count = sum(1 for t in tickets if isinstance(t, dict) and t.get('status') == 'open')
+    except Exception as e:
+        app.logger.error(f"Failed to load data for admin dashboard: {e}", exc_info=True)
+        flash("Error loading dashboard data.", "danger")
+        products, tickets, orders, open_ticket_count = [], [], [], 0
+    # Pass last 10 orders, reversed (newest first)
+    return render_template("admin/dashboard.html", products=products, tickets=tickets, orders=orders[-10:][::-1], open_ticket_count=open_ticket_count)
 
 @app.route('/admin/products', methods=['GET'])
 @admin_required
 def admin_view_products():
-    # ... (logic remains the same, renders updated template) ...
     prebuilts = load_prebuilts()
     categories = sorted(list(set(pc.get('category', 'General Use') for pc in prebuilts)))
+    # Group PCs by category
     categorized_pcs = {cat: [pc for pc in prebuilts if pc.get('category', 'General Use') == cat] for cat in categories}
     return render_template('admin/products.html', categorized_pcs=categorized_pcs, categories=categories)
-
 
 @app.route('/admin/add_product', methods=['POST'])
 @admin_required
 def admin_add_product():
-    # ... (logic remains the same, uses form data from updated template) ...
-    # TODO: Add Flask-WTF validation
+    # TODO: Add CSRF check if using Flask-WTF
     try:
         name = request.form.get('name', '').strip()
         description = request.form.get('description', '').strip()
@@ -642,147 +879,259 @@ def admin_add_product():
         image = request.form.get('image', '').strip()
         category = request.form.get('category', 'General Use').strip()
 
+        # --- Basic Manual Validation (Replace/Enhance with WTForms) ---
         errors = []
-        if not name: errors.append("Name required.")
-        if not description: errors.append("Description required.")
-        if not category: errors.append("Category required.")
+        if not name: errors.append("Product name is required.")
+        if not description: errors.append("Product description is required.")
+        if not category: errors.append("Product category is required.")
         price = 0.0
-        try: price = float(price_str); assert price >= 0
-        except (ValueError, AssertionError): errors.append("Invalid price.")
+        try:
+            price = float(price_str)
+            if price < 0:
+                 errors.append("Price cannot be negative.")
+        except ValueError:
+            errors.append("Invalid price format. Please enter a number.")
 
         if errors:
             for error in errors: flash(error, "warning")
+            # Redirect back to product page, consider passing failed data if needed
             return redirect(url_for('admin_view_products'))
+        # --- End Validation ---
 
-        new_product = { "id": str(uuid.uuid4()), "name": name, "description": description, "price": price, "image": image or DEFAULT_IMAGE, "category": category }
+        new_product_id = str(uuid.uuid4())
+        new_product = {
+            "id": new_product_id,
+            "name": name,
+            "description": description,
+            "price": price,
+            "image": image or DEFAULT_IMAGE, # Use default if blank
+            "category": category
+        }
         prebuilts = load_prebuilts()
         prebuilts.append(new_product)
         if save_prebuilts(prebuilts):
-            flash(f"Product '{name}' added.", "success"); app.logger.info(f"Admin added product: {name}")
+            flash(f"Product '{name}' added successfully.", "success")
+            app.logger.info(f"Admin added product ID: {new_product_id} (Name: {name})")
+        # else: Error flashed by save_prebuilts
+
         return redirect(url_for('admin_view_products'))
+
     except Exception as e:
-        app.logger.error(f"Add product failed: {e}", exc_info=True)
-        flash("Error adding product.", "danger"); return redirect(url_for('admin_view_products'))
+        app.logger.error(f"Add product failed unexpectedly: {e}", exc_info=True)
+        flash("An unexpected error occurred while adding the product.", "danger")
+        return redirect(url_for('admin_view_products'))
+
 
 @app.route('/admin/delete_product/<product_id>', methods=['POST'])
 @admin_required
 def admin_delete_product(product_id):
-    # ... (logic remains the same, uses product_id) ...
-    # TODO: Add CSRF check
+    # TODO: Add CSRF check if using Flask-WTF
     try:
         prebuilts = load_prebuilts()
         initial_len = len(prebuilts)
+        product_to_delete = next((p for p in prebuilts if p.get('id') == product_id), None)
+
+        if not product_to_delete:
+             flash("Product not found.", "warning")
+             app.logger.warning(f"Delete failed: Product ID {product_id} not found.")
+             return redirect(url_for('admin_view_products'))
+
+        # Filter out the product
         prebuilts_filtered = [p for p in prebuilts if p.get('id') != product_id]
-        if len(prebuilts_filtered) < initial_len:
-            if save_prebuilts(prebuilts_filtered):
-                name = next((p.get('name','?') for p in prebuilts if p.get('id') == product_id),'?')
-                flash(f"Product '{name}' deleted.", "success"); app.logger.info(f"Admin deleted product ID: {product_id}")
-            # else: error flashed by save_prebuilts
-        else: flash("Product not found.", "warning"); app.logger.warning(f"Delete failed: Product ID {product_id} not found.")
+
+        # Save the filtered list
+        if save_prebuilts(prebuilts_filtered):
+            deleted_name = product_to_delete.get('name', f'ID {product_id[:8]}')
+            flash(f"Product '{deleted_name}' deleted successfully.", "success")
+            app.logger.info(f"Admin deleted product ID: {product_id} (Name: {deleted_name})")
+        # else: Error flashed by save_prebuilts
+
         return redirect(url_for('admin_view_products'))
+
     except Exception as e:
         app.logger.error(f"Error deleting product {product_id}: {e}", exc_info=True)
-        flash("Error deleting product.", "danger"); return redirect(url_for('admin_view_products'))
-
+        flash("An unexpected error occurred while deleting the product.", "danger")
+        return redirect(url_for('admin_view_products'))
 
 @app.route('/admin/tickets', methods=['GET'])
 @admin_required
 def admin_view_tickets():
-    # ... (logic remains the same, renders updated template) ...
     tickets = load_tickets()
+    # Get filter/search params
     ticket_status_filter = request.args.get("status", "all").lower()
     search_query = request.args.get("search", "").strip().lower()
-    filtered_tickets = tickets
-    if ticket_status_filter == "open": filtered_tickets = [t for t in filtered_tickets if t.get('status') == 'open']
-    elif ticket_status_filter == "closed": filtered_tickets = [t for t in filtered_tickets if t.get('status') == 'closed']
-    if search_query:
-         filtered_tickets = [ t for t in filtered_tickets if search_query in t.get("name", "").lower() or search_query in t.get("email", "").lower() or search_query in t.get("issue", "").lower() or search_query in t.get("id", "").lower() ]
-    return render_template('admin/tickets.html', tickets=filtered_tickets, ticket_status_filter=ticket_status_filter, search_query=search_query)
 
+    # Apply filtering
+    filtered_tickets = tickets
+    if ticket_status_filter == "open":
+        filtered_tickets = [t for t in filtered_tickets if isinstance(t, dict) and t.get('status') == 'open']
+    elif ticket_status_filter == "closed":
+        filtered_tickets = [t for t in filtered_tickets if isinstance(t, dict) and t.get('status') == 'closed']
+
+    # Apply search
+    if search_query:
+         filtered_tickets = [
+            t for t in filtered_tickets if isinstance(t, dict) and (
+                search_query in t.get("name", "").lower() or
+                search_query in t.get("email", "").lower() or
+                search_query in t.get("issue", "").lower() or
+                search_query in t.get("id", "").lower() # Search by full or partial ID
+            )
+         ]
+    # Sort tickets by timestamp (newest first) - assumes ISO format
+    try:
+        filtered_tickets.sort(key=lambda t: t.get('timestamp', ''), reverse=True)
+    except Exception as sort_err:
+        app.logger.warning(f"Could not sort tickets by timestamp: {sort_err}")
+
+    return render_template('admin/tickets.html', tickets=filtered_tickets, ticket_status_filter=ticket_status_filter, search_query=search_query)
 
 @app.route('/admin/close_ticket/<ticket_id>', methods=['POST'])
 @admin_required
 def admin_close_ticket(ticket_id):
-    # ... (logic remains the same, uses ticket_id) ...
-    # TODO: Add CSRF check
+    # TODO: Add CSRF check if using Flask-WTF
     try:
         tickets = load_tickets()
-        ticket_found = False; ticket_updated = False
+        ticket_found = False
+        ticket_updated = False
         for ticket in tickets:
-            if ticket.get("id") == ticket_id:
+            if isinstance(ticket, dict) and ticket.get("id") == ticket_id:
                 ticket_found = True
                 if ticket.get("status") != "closed":
                     ticket["status"] = "closed"
+                    # Optional: Add a closed_timestamp
+                    # ticket["closed_timestamp"] = datetime.datetime.now().isoformat()
                     if save_tickets(tickets):
-                        flash(f"Ticket {ticket_id[:8]} closed.", "success"); app.logger.info(f"Admin closed ticket ID: {ticket_id}")
+                        flash(f"Ticket {ticket_id[:8]} marked as closed.", "success")
+                        app.logger.info(f"Admin closed ticket ID: {ticket_id}")
                         ticket_updated = True
-                    # else: error flashed by save_tickets
+                    # else: Error flashed by save_tickets
                 else:
-                    flash(f"Ticket {ticket_id[:8]} already closed.", "info"); ticket_updated = True
-                break
-        if not ticket_found: flash("Ticket not found.", "warning"); app.logger.warning(f"Close failed: Ticket ID {ticket_id} not found.")
+                    flash(f"Ticket {ticket_id[:8]} was already closed.", "info")
+                    ticket_updated = True # Still considered 'found and handled'
+                break # Found the ticket, no need to continue loop
+
+        if not ticket_found:
+            flash("Ticket not found.", "warning")
+            app.logger.warning(f"Close ticket failed: Ticket ID {ticket_id} not found.")
+
+        # Redirect back with filters preserved
         status_filter = request.form.get('status_filter', 'all')
         search_query = request.form.get('search_query', '')
         return redirect(url_for('admin_view_tickets', status=status_filter, search=search_query))
+
     except Exception as e:
         app.logger.error(f"Error closing ticket {ticket_id}: {e}", exc_info=True)
-        flash("Error closing ticket.", "danger"); return redirect(url_for('admin_view_tickets'))
+        flash("An unexpected error occurred while closing the ticket.", "danger")
+        return redirect(url_for('admin_view_tickets'))
 
 
 @app.route('/admin/test-email', methods=['POST'])
 @admin_required
 def admin_test_email():
-    # ... (logic remains the same) ...
-    # TODO: Add CSRF check
+    # TODO: Add CSRF check if using Flask-WTF
     admin_email = app.config.get('EMAIL_ADDRESS')
-    if not admin_email: flash("Admin email not configured.", "danger"); return redirect(url_for('admin_dashboard'))
-    subject = f"Test Email - {app.config['YOUR_DOMAIN']} Admin"
-    body = f"Test email sent from admin panel.\nTime: {datetime.datetime.now()}"
+    if not admin_email:
+        flash("Admin email address is not configured in settings.", "danger")
+        return redirect(url_for('admin_dashboard'))
+
+    subject = f"Test Email from {app.config.get('YOUR_DOMAIN', 'Your Website')} Admin Panel"
+    # Use ISO format for timestamp in email body
+    timestamp = datetime.datetime.now().isoformat()
+    try:
+        formatted_time = format_datetime(datetime.datetime.fromisoformat(timestamp)) if BABEL_INSTALLED else timestamp
+    except: formatted_time = timestamp # Fallback
+    body = f"This is a test email sent from the admin panel.\n\nTime: {formatted_time}"
+
     if send_email(admin_email, subject, body):
-        flash(f'Test email sent to {admin_email}.', 'success'); app.logger.info("Admin test email sent.")
-    else: app.logger.error("Admin test email failed.") # Error flashed by helper
-    return redirect(url_for('admin_dashboard'))
+        flash(f'Test email sent successfully to {admin_email}. Please check your inbox (and spam folder).', 'success')
+        app.logger.info(f"Admin triggered test email to {admin_email}")
+    else:
+        # Error message flashed by send_email helper
+        app.logger.error(f"Admin test email failed to send to {admin_email}")
+
+    return redirect(url_for('admin_dashboard')) # Redirect back to dashboard
 
 
-# --- Security Check Routes (Basic Implementation) ---
+# --- Security Check Routes ---
 def check_security_status():
     """Performs basic security checks and returns status dict."""
     app.logger.info("Running security checks...")
-    status = { 'timestamp': datetime.datetime.now().isoformat(), 'checks_performed': [] }
+    status = {
+        'timestamp': datetime.datetime.now().isoformat(),
+        'checks_performed': []
+    }
     checks = status['checks_performed']
 
     # 1. Debug Mode Check
     is_debug = app.config['DEBUG']
-    checks.append({ 'name': 'Debug Mode', 'status': 'WARNING' if is_debug else 'OK', 'details': f"Debug mode is {'ON' if is_debug else 'OFF'}." + (" Should be OFF in production." if is_debug else "") })
+    checks.append({
+        'name': 'Debug Mode Status',
+        'status': 'WARNING' if is_debug else 'OK',
+        'details': f"Debug mode is currently {'ON' if is_debug else 'OFF'}. " + ("This reveals detailed errors and should be OFF in a live production environment." if is_debug else "Correct setting for production.")
+    })
 
-    # 2. Admin Password Check (Checks if hash exists)
+    # 2. Admin Password Hash Check
     has_hash = bool(app.config.get('ADMIN_PASSWORD_HASH'))
-    checks.append({ 'name': 'Admin Password Hash', 'status': 'OK' if has_hash else 'CRITICAL', 'details': "Checks if ADMIN_PASSWORD env var is set." + (" Hash should be stored, not plaintext." if has_hash else " Env var MUST be set to a password HASH.") })
+    checks.append({
+        'name': 'Admin Password Configuration',
+        'status': 'OK' if has_hash else 'CRITICAL',
+        'details': "Checks if the ADMIN_PASSWORD environment variable is set. " + ("It is set (should contain a secure HASH, not plaintext)." if has_hash else "CRITICAL: Env var MUST be set to a securely generated password HASH.")
+    })
 
     # 3. Secret Key Check
     secret_key = app.config.get('SECRET_KEY')
-    is_weak_key = not secret_key or secret_key == 'temporary-insecure-key-for-dev-only'
-    checks.append({ 'name': 'Secret Key Strength', 'status': 'CRITICAL' if is_weak_key else 'OK', 'details': "Checks if SECRET_KEY is set and not a known weak default." })
+    is_weak_key = not secret_key or secret_key in ['temporary-insecure-key-for-dev-only', 'a_default_secret_key_for_development'] # Check against default/weak keys
+    checks.append({
+        'name': 'Application Secret Key',
+        'status': 'CRITICAL' if is_weak_key else 'OK',
+        'details': "Checks if SECRET_KEY is set and is not a known weak/default value. " + ("CRITICAL: A strong, unique secret key is required for session security." if is_weak_key else "Secret key appears to be set.")
+    })
 
-    # 4. Email Config Check
+    # 4. Email Configuration Check
     email_ok = bool(app.config.get('EMAIL_ADDRESS') and app.config.get('EMAIL_PASSWORD'))
-    checks.append({ 'name': 'Email Configuration', 'status': 'OK' if email_ok else 'WARNING', 'details': "Checks if EMAIL_ADDRESS and EMAIL_PASSWORD are set." })
+    checks.append({
+        'name': 'Email Sending Configuration',
+        'status': 'OK' if email_ok else 'WARNING',
+        'details': "Checks if EMAIL_ADDRESS and EMAIL_PASSWORD environment variables are set. " + ("Both appear set." if email_ok else "WARNING: One or both variables missing; email sending will fail.")
+    })
 
     # 5. Stripe Keys Check (Warn if using test keys in production env)
     is_prod_env = app.config['FLASK_ENV'] == 'production'
-    using_test_keys = app.config.get('STRIPE_SECRET_KEY','').startswith('sk_test_')
+    secret_key_exists = bool(app.config.get('STRIPE_SECRET_KEY'))
+    public_key_exists = bool(app.config.get('STRIPE_PUBLIC_KEY'))
+    using_test_secret = app.config.get('STRIPE_SECRET_KEY','').startswith('sk_test_')
+    using_test_public = app.config.get('STRIPE_PUBLIC_KEY','').startswith('pk_test_')
     stripe_status = 'OK'
-    stripe_details = "Checks if Stripe keys are set."
-    if not app.config.get('STRIPE_SECRET_KEY'):
+    stripe_details = "Checks if Stripe keys are set and appropriate for the environment."
+
+    if not secret_key_exists or not public_key_exists:
         stripe_status = 'WARNING'
-        stripe_details += " Secret key missing!"
-    elif is_prod_env and using_test_keys:
+        stripe_details += f" WARNING: {'Secret' if not secret_key_exists else ''}{' and ' if not secret_key_exists and not public_key_exists else ''}{'Public' if not public_key_exists else ''} Stripe key(s) missing! Payments will fail."
+    elif is_prod_env and (using_test_secret or using_test_public):
         stripe_status = 'WARNING'
-        stripe_details += " Using TEST keys in production environment!"
-    elif not is_prod_env and not using_test_keys and app.config.get('STRIPE_SECRET_KEY'):
-         stripe_status = 'INFO' # Using Live keys in dev is okay but maybe noteworthy
-         stripe_details += " Using LIVE keys in development environment."
-    checks.append({ 'name': 'Stripe Keys', 'status': stripe_status, 'details': stripe_details })
+        stripe_details += f" WARNING: Using TEST {'Secret' if using_test_secret else ''}{' and ' if using_test_secret and using_test_public else ''}{'Public' if using_test_public else ''} key(s) in PRODUCTION environment! Real payments will not be processed."
+    elif not is_prod_env and not using_test_secret and secret_key_exists:
+        stripe_status = 'INFO' # Using Live keys in dev might be intentional but good to note
+        stripe_details += " INFO: Using LIVE Stripe secret key in non-production environment."
+    # Add more checks if needed (e.g., check webhook secret)
+
+    checks.append({ 'name': 'Stripe API Keys', 'status': stripe_status, 'details': stripe_details })
+
+    # 6. Data Directory Writable Check (Basic)
+    try:
+        test_file = os.path.join(DATA_DIR, '.writable_test')
+        with open(test_file, 'w') as f: f.write('test')
+        os.remove(test_file)
+        writable_status = 'OK'
+        writable_details = f"Data directory ({DATA_DIR}) appears writable."
+    except Exception as e:
+        writable_status = 'CRITICAL'
+        writable_details = f"CRITICAL: Cannot write to data directory ({DATA_DIR}). Sessions, data files, receipts, logs will fail. Error: {e}"
+        app.logger.error(writable_details, exc_info=True)
+
+    checks.append({'name': 'Data Directory Writable', 'status': writable_status, 'details': writable_details })
+
 
     # Calculate Overall Status
     if any(c['status'] == 'CRITICAL' for c in checks): status['overall_status'] = 'CRITICAL'
@@ -791,8 +1140,8 @@ def check_security_status():
 
     # Save status to file
     if not save_json_data(SECURITY_STATUS_FILE, status):
-         app.logger.error("Failed to save security status to file!")
-         # Maybe flash an error here too
+        app.logger.error("Failed to save security status to file!")
+        # Maybe flash an error here too?
     return status
 
 def get_last_security_status():
@@ -801,10 +1150,14 @@ def get_last_security_status():
     status_data = load_json_data(SECURITY_STATUS_FILE, default_data=None)
     if status_data is None:
         # load_json_data failed (error already logged/flashed) or file doesn't exist yet
-        return {'message': 'Security status file not found or unreadable.', 'timestamp': None}
+        return {'message': 'Security status file not found or unreadable. Run check first.', 'timestamp': None, 'checks_performed': []}
     elif not isinstance(status_data, dict) or 'timestamp' not in status_data:
-         app.logger.warning(f"Invalid format in security status file: {SECURITY_STATUS_FILE}")
-         return {'message': 'Security status file is invalid.', 'timestamp': None}
+        app.logger.warning(f"Invalid format in security status file: {SECURITY_STATUS_FILE}")
+        # Attempt recovery or return error state
+        return {'message': 'Security status file is invalid. Run check again.', 'timestamp': None, 'checks_performed': []}
+    # Ensure keys exist for template rendering
+    status_data.setdefault('overall_status', 'UNKNOWN')
+    status_data.setdefault('checks_performed', [])
     return status_data
 
 
@@ -812,19 +1165,19 @@ def get_last_security_status():
 @admin_required
 def run_security_check():
     """Runs security checks and redirects to status page."""
-    # TODO: Add CSRF check
+    # TODO: Add CSRF check if using Flask-WTF
     try:
         status = check_security_status() # This now saves the status too
         if status.get('overall_status') == 'CRITICAL':
-             flash("CRITICAL security issues found!", "danger")
+            flash("CRITICAL security issues found! Please review the status details.", "danger")
         elif status.get('overall_status') == 'WARNING':
-             flash("Security check found WARNINGS.", "warning")
+            flash("Security check completed with WARNINGS. Please review the status details.", "warning")
         else:
-             flash("Security check completed.", "success")
+            flash("Security check completed. All checks passed (OK or INFO).", "success")
         app.logger.info(f"Admin triggered security check. Overall: {status.get('overall_status')}")
     except Exception as e:
         app.logger.error(f"Security check run failed: {e}", exc_info=True)
-        flash("Error running security checks.", "danger")
+        flash("An error occurred while running security checks.", "danger")
     # Redirect to the status page to view results
     return redirect(url_for('get_security_status_route'))
 
@@ -837,13 +1190,12 @@ def get_security_status_route():
         status = get_last_security_status()
         return render_template('admin/security_status.html', status=status)
     except Exception as e:
-        app.logger.error(f"Failed to get security status page: {e}", exc_info=True)
+        app.logger.error(f"Failed to display security status page: {e}", exc_info=True)
         flash("Error retrieving security status.", "danger")
         return redirect(url_for('admin_dashboard'))
 
 
-# --- Error Handlers (Unchanged) ---
-# ... (Error handlers 401, 403, 404, 500, Exception remain the same) ...
+# --- Error Handlers ---
 @app.errorhandler(404)
 def not_found_error(error):
     app.logger.warning(f'Not Found: {request.path} (Referrer: {request.referrer}, IP: {request.remote_addr})')
@@ -858,28 +1210,41 @@ def forbidden_error(error):
 def unauthorized_error(error):
     app.logger.warning(f'Unauthorized access attempt: {request.path} from {request.remote_addr}')
     flash("You need to be logged in to access this page.", "warning")
-    return redirect(url_for('admin_login', next=request.url)) if request.path.startswith('/admin') else redirect(url_for('index'))
+    # Redirect to admin login if trying to access admin area, otherwise index
+    if request.path.startswith('/admin'):
+         return redirect(url_for('admin_login', next=request.url))
+    else:
+         return redirect(url_for('index'))
 
 @app.errorhandler(500)
 def internal_error(error):
-    app.logger.error(f'Internal Server Error on path {request.path}: {error}', exc_info=True)
-    message = "An unexpected internal error occurred. We have been notified."
-    if app.debug: message = f"Internal Server Error: {error}"
+    # Note: error variable might not contain detailed info unless debug is on
+    app.logger.error(f'Internal Server Error on path {request.path}', exc_info=True) # Log detailed traceback
+    message = "An unexpected internal error occurred. We have been notified and are looking into it."
+    # Avoid showing detailed errors in production
+    # if app.debug: message = f"Internal Server Error: {error}"
     return render_template('error.html', error_code=500, error_message=message), 500
 
+# Generic exception handler (catches errors not handled by specific handlers)
 @app.errorhandler(Exception)
 def handle_exception(e):
-    app.logger.error(f'Unhandled Exception on path {request.path}: {e}', exc_info=True)
-    message = "An unexpected error occurred."
-    if app.debug: message = f"Unhandled Exception: {e}"
+    # Log the detailed exception
+    app.logger.error(f'Unhandled Exception on path {request.path}', exc_info=e)
+    # Generic message for the user
+    message = "An unexpected error occurred. Please try again later or contact support if the issue persists."
+    # Avoid showing specific exception details in production
+    # if app.debug: message = f"Unhandled Exception: {e}"
     return render_template('error.html', error_code=500, error_message=message), 500
 
 # --- Main Execution ---
-# This block is mainly for local development.
-# OnRender will typically use a command like 'gunicorn app:app' specified in its settings.
+# This block is mainly for local development using `python app.py`.
+# OnRender/Gunicorn/Waitress will typically import the `app` object directly.
 if __name__ == '__main__':
+    # Port is often set by the hosting environment (e.g., PORT env var)
     port = int(os.environ.get("PORT", 5000))
-    # Debug mode is controlled by FLASK_DEBUG env var
-    # Host '0.0.0.0' is needed for OnRender/Docker, '127.0.0.1' for local only.
-    host = '0.0.0.0'
-    app.run(host=host, port=port) # Debug is set via app.config['DEBUG']
+    # Debug mode is controlled by FLASK_DEBUG env var or app.config['DEBUG']
+    # Host '0.0.0.0' makes the server accessible externally (needed for Docker/OnRender)
+    # Host '127.0.0.1' (default) is only accessible locally
+    host = '0.0.0.0' if os.environ.get("FLASK_ENV") == 'production' else '127.0.0.1'
+    # Use debug=app.config['DEBUG'] to respect the config setting
+    app.run(host=host, port=port, debug=app.config['DEBUG'])
