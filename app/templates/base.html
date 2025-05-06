@@ -25,7 +25,7 @@
         {# Add 'active' class dynamically if possible, requires passing active_page from Flask #}
         {# Example: <a href="..." class="{{ 'active' if active_page == 'prebuilts' else '' }}"> #}
         <a href="{{ url_for('prebuilts') }}"><i class="fas fa-desktop"></i> Prebuilt PCs</a>
-        <a href="{{ url_for('custom') }}"><i class="fas fa-tools"></i> Custom Build</a>
+        <a href="{{ url_for('custom_build_request') }}"><i class="fas fa-tools"></i> Custom Build</a>
         <a href="{{ url_for('support_ticket') }}"><i class="fas fa-headset"></i> Tech Support</a>
         <a href="{{ url_for('terms') }}"><i class="fas fa-file-contract"></i> Terms</a>
         {# Add Admin link if admin is logged in #}
